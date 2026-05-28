@@ -182,13 +182,14 @@
       }).then(function (r) {
         submitBtn.disabled = false;
         submitBtn.textContent = "Confirmar mi registro";
-        if (r && r.error) {
-          if (r.error.code === "23505") { show("Este correo ya está registrado. ¡Te esperamos en el foro!", "ok"); form.reset(); }
-          else { show("Ocurrió un error al guardar. Inténtalo de nuevo o escríbenos por WhatsApp.", "err"); }
+        if (r && r.error && r.error.code !== "23505") {
+          show("Ocurrió un error al guardar. Inténtalo de nuevo o escríbenos por WhatsApp.", "err");
           return;
         }
-        show("¡Registro confirmado! Te enviaremos el programa y los detalles del foro.", "ok");
-        form.reset();
+        // Éxito (o el correo ya estaba registrado): llevamos a la página de gracias.
+        var mf = document.querySelector('link[rel="manifest"]');
+        var base = mf ? mf.href.replace(/manifest\.json.*$/, "") : "./";
+        window.location.href = base + "gracias/";
       }).catch(function () {
         submitBtn.disabled = false;
         submitBtn.textContent = "Confirmar mi registro";

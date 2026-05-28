@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Panel HOPUR · Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#43c7c9">
+  <link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    body{background:#eef2f2}
+    .wrap{max-width:760px;margin:0 auto;padding:22px 18px 60px}
+    .ad-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .ad-bar img{height:28px}
+    .ad-bar .who{font-size:13px;color:var(--muted)}
+    .ad-card{background:#fff;border:1px solid var(--glass-brd);border-radius:20px;box-shadow:var(--shadow);padding:22px;margin-bottom:16px}
+    .ad-card h2{margin:0 0 4px;font-size:18px;font-weight:900;color:var(--c2)}
+    .ad-card p.sub{margin:0 0 16px;font-size:13px;color:var(--muted)}
+    .ad-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+    .ad-stat{background:#fff;border:1px solid var(--glass-brd);border-radius:18px;box-shadow:var(--shadow);padding:18px;text-align:center}
+    .ad-stat strong{display:block;font-size:30px;font-weight:900;color:var(--c1-deep);line-height:1}
+    .ad-stat span{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:6px}
+    label.fl{display:block;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:12px 0 5px}
+    .ad-card input[type=text],.ad-card input[type=email],.ad-card textarea{width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-size:15px;font-family:var(--font);color:var(--c2);box-sizing:border-box}
+    .ad-card textarea{min-height:80px;resize:vertical;line-height:1.5}
+    .ad-card input:focus,.ad-card textarea:focus{outline:none;border-color:var(--c1);box-shadow:0 0 0 4px rgba(67,199,201,.15)}
+    .chkrow{display:flex;align-items:center;gap:9px;margin:14px 0;font-size:14px;color:var(--tx)}
+    .chkrow input{width:18px;height:18px;accent-color:var(--c1)}
+    .msg{display:none;margin-top:12px;padding:11px 14px;border-radius:12px;font-size:14px;font-weight:600}
+    .msg.is-show{display:block}
+    .msg.ok{background:rgba(67,199,201,.12);color:var(--c1-deep)}
+    .msg.err{background:rgba(224,36,94,.1);color:#c01e4f}
+    .btn-google{width:100%;min-height:50px;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#3c4043;border:1.5px solid #dadce0;border-radius:14px;font-weight:700;font-size:15px;font-family:var(--font);cursor:pointer;margin-bottom:14px}
+    .btn-google img{width:20px;height:20px}
+    .divider{display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase}
+    .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+    .post-row{display:flex;gap:12px;align-items:flex-start;border-bottom:1px solid var(--line);padding:12px 0}
+    .post-row:last-child{border-bottom:0}
+    .post-row b{font-size:14.5px;color:var(--c2);display:block}
+    .post-row small{font-size:12px;color:var(--muted)}
+    .post-row button{margin-left:auto;flex:0 0 auto;background:none;border:1px solid var(--line);color:#c01e4f;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
+    .hide{display:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="ad-bar">
+      <img src="https://i.imgur.com/QNAIET0.png" alt="HOPUR">
+      <span class="who" id="adWho"></span>
+    </div>
+
+    <!-- LOGIN -->
+    <section id="adLogin" class="ad-card">
+      <h2>Panel de administración</h2>
+      <p class="sub">Inicia sesión para publicar en «última hora» y enviar notificaciones. Solo correos autorizados.</p>
+      <button type="button" class="btn-google" id="adGoogle"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt=""> Entrar con Google</button>
+      <div class="divider">o con tu correo</div>
+      <label class="fl" for="adEmail">Correo</label>
+      <input id="adEmail" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email">
+      <button class="btn btn--primary btn--block" id="adMagic" style="margin-top:12px">Enviarme enlace de acceso</button>
+      <div class="msg" id="adLoginMsg" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- NO AUTORIZADO -->
+    <section id="adDenied" class="ad-card hide">
+      <h2>Sin acceso</h2>
+      <p class="sub">Tu correo no está autorizado como administrador. Pide que te agreguen en Supabase (tabla <code>hopur_admins</code>) y vuelve a entrar.</p>
+      <button class="btn btn--secondary btn--block" id="adLogout2">Cerrar sesión</button>
+    </section>
+
+    <!-- APP -->
+    <div id="adApp" class="hide">
+      <div class="ad-stats">
+        <div class="ad-stat"><strong id="statRegs">—</strong><span>Registrados</span></div>
+        <div class="ad-stat"><strong id="statSubs">—</strong><span>Suscriptores push</span></div>
+      </div>
+
+      <section class="ad-card">
+        <h2>Publicar en «última hora»</h2>
+        <p class="sub">Aparece al instante en la app, sección Noticias.</p>
+        <label class="fl" for="pTitle">Título</label>
+        <input id="pTitle" type="text" placeholder="Ej. Panel de turismo y talento">
+        <label class="fl" for="pPanelist">Panelista / fuente</label>
+        <input id="pPanelist" type="text" placeholder="Ej. Darío Flota Ocampo">
+        <label class="fl" for="pRole">Cargo / tema</label>
+        <input id="pRole" type="text" placeholder="Ej. Turismo y desarrollo de destino">
+        <label class="fl" for="pSummary">Resumen</label>
+        <textarea id="pSummary" placeholder="Una o dos frases con lo esencial…"></textarea>
+        <label class="fl" for="pPoints">Puntos clave (uno por línea)</label>
+        <textarea id="pPoints" placeholder="Idea 1&#10;Idea 2&#10;Idea 3"></textarea>
+        <div class="chkrow"><input type="checkbox" id="pPush" checked><label for="pPush">Enviar notificación push al publicar</label></div>
+        <button class="btn btn--primary btn--block" id="pSave">Publicar</button>
+        <div class="msg" id="pMsg" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="ad-card">
+        <h2>Enviar notificación suelta</h2>
+        <p class="sub">Para avisos rápidos sin crear un post.</p>
+        <label class="fl" for="nTitle">Título</label>
+        <input id="nTitle" type="text" placeholder="Ej. Comienza la clausura">
+        <label class="fl" for="nBody">Mensaje</label>
+        <input id="nBody" type="text" placeholder="Te esperamos en el auditorio principal.">
+        <button class="btn btn--secondary btn--block" id="nSend" style="margin-top:12px">Enviar push</button>
+        <div class="msg" id="nMsg" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="ad-card">
+        <h2>Publicaciones recientes</h2>
+        <div id="adPosts"><p class="sub">Cargando…</p></div>
+      </section>
+
+      <button class="btn btn--ghost" id="adLogout" style="width:100%;justify-content:center">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

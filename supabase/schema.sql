@@ -114,3 +114,41 @@ create policy hopur_push_insert_anon
   on public.hopur_push_subscriptions
   for insert to anon, authenticated
   with check (true);
+
+
+-- ============================================================
+-- ADMINS — quién puede publicar en el blog y enviar push
+-- ============================================================
+create table if not exists public.hopur_admins (
+  email      text primary key,
+  created_at timestamptz not null default now()
+);
+alter table public.hopur_admins enable row level security;
+
+-- Un usuario autenticado puede consultar SOLO su propia fila (saber si es admin).
+drop policy if exists hopur_admins_self on public.hopur_admins;
+create policy hopur_admins_self on public.hopur_admins
+  for select to authenticated
+  using (lower(email) = lower(auth.jwt() ->> 'email'));
+
+-- Los admins pueden gestionar TODO el blog (crear, editar, borrar, ver borradores).
+drop policy if exists hopur_posts_admin_all on public.hopur_posts;
+create policy hopur_posts_admin_all on public.hopur_posts
+  for all to authenticated
+  using (exists (select 1 from public.hopur_admins a where lower(a.email) = lower(auth.jwt() ->> 'email')))
+  with check (exists (select 1 from public.hopur_admins a where lower(a.email) = lower(auth.jwt() ->> 'email')));
+
+-- Los admins pueden leer los contactos registrados (para el conteo del panel).
+drop policy if exists hopur_contacts_admin_select on public.hopur_contacts;
+create policy hopur_contacts_admin_select on public.hopur_contacts
+  for select to authenticated
+  using (exists (select 1 from public.hopur_admins a where lower(a.email) = lower(auth.jwt() ->> 'email')));
+
+-- Los admins pueden leer las suscripciones push (para el conteo del panel).
+drop policy if exists hopur_push_admin_select on public.hopur_push_subscriptions;
+create policy hopur_push_admin_select on public.hopur_push_subscriptions
+  for select to authenticated
+  using (exists (select 1 from public.hopur_admins a where lower(a.email) = lower(auth.jwt() ->> 'email')));
+
+-- 👉 IMPORTANTE: date de alta como admin (cambia el correo por el tuyo de Google):
+--    insert into public.hopur_admins (email) values ('tucorreo@gmail.com');
