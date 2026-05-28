@@ -53,10 +53,18 @@
         headers: { "Content-Type": "application/json", "apikey": CFG.SUPABASE_KEY, "Authorization": "Bearer " + token },
         body: JSON.stringify({ title: title, body: body, url: url || "app/dashboard/#noticias" })
       }).then(function (r) {
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        return r.json().catch(function () { return {}; });
+        return r.json().then(function (j) { j = j || {}; j.__status = r.status; return j; })
+          .catch(function () { return { ok: false, error: "HTTP " + r.status, __status: r.status }; });
       });
     });
+  }
+  function pushResult(el, res, prefix) {
+    prefix = prefix || "";
+    var sent = (res && res.sent) || 0, failed = (res && res.failed) || 0;
+    if (res && res.error) { msg(el, prefix + "Error de la función: " + res.error, "err"); return; }
+    if (sent > 0) { msg(el, prefix + "Notificación enviada a " + sent + " dispositivo(s).", "ok"); return; }
+    if (failed > 0) { msg(el, prefix + "Falló el envío (" + failed + "). Detalle: " + (res.lastError || "—"), "err"); return; }
+    msg(el, prefix + "Sin suscriptores activos. Activa las notificaciones en la app primero.", failed || sent ? "ok" : "err");
   }
 
   // ---- Sesión / autorización ----
@@ -175,8 +183,8 @@
         if (doPush) {
           msg($("pMsg"), "Publicado. Enviando notificación…", "ok");
           sendPush(title, summary || "Nueva publicación en Yucatalent")
-            .then(function (res) { msg($("pMsg"), "Publicado y notificado (" + ((res && res.sent) || 0) + " envíos).", "ok"); })
-            .catch(function () { msg($("pMsg"), "Publicado. La notificación no se envió (¿falta desplegar la función?).", "err"); });
+            .then(function (res) { pushResult($("pMsg"), res, "Publicado. "); })
+            .catch(function () { msg($("pMsg"), "Publicado. La notificación no se envió (sin conexión).", "err"); });
         } else { msg($("pMsg"), "¡Publicado!", "ok"); }
       }).catch(function () { btn.disabled = false; btn.textContent = "Publicar"; msg($("pMsg"), "Error de conexión.", "err"); });
     }
@@ -197,7 +205,11 @@
     var dest = ($("nDest") && $("nDest").value) || "app/dashboard/#noticias";
     var btn = $("nSend"); btn.disabled = true; btn.textContent = "Enviando…";
     sendPush(t, b, dest)
-      .then(function (res) { btn.disabled = false; btn.textContent = "Enviar push"; msg($("nMsg"), "Enviado (" + ((res && res.sent) || 0) + " envíos).", "ok"); $("nTitle").value = ""; $("nBody").value = ""; })
+      .then(function (res) {
+        btn.disabled = false; btn.textContent = "Enviar push";
+        pushResult($("nMsg"), res);
+        if (res && res.sent > 0) { $("nTitle").value = ""; $("nBody").value = ""; }
+      })
       .catch(function () { btn.disabled = false; btn.textContent = "Enviar push"; msg($("nMsg"), "No se pudo enviar. Asegúrate de haber desplegado la función 'notify' y configurado las llaves VAPID.", "err"); });
   });
 })();
