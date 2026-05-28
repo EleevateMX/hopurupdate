@@ -1,23 +1,23 @@
 // Service worker HOPUR — cache ligero "app shell" + offline básico.
-const CACHE = "hopur-v3";
+const CACHE = "hopur-v4";
 const ASSETS = [
-  "/",
-  "/index.html",
-  "/nosotros/",
-  "/servicios/",
-  "/eventos/",
-  "/contacto/",
-  "/app/",
-  "/app/index.html",
-  "/app/dashboard/",
-  "/app/dashboard/index.html",
-  "/css/styles.css",
-  "/css/app.css",
-  "/js/config.js",
-  "/js/main.js",
-  "/js/app.js",
-  "/manifest.json",
-  "/icons/icon.svg"
+  "./",
+  "index.html",
+  "nosotros/",
+  "servicios/",
+  "eventos/",
+  "contacto/",
+  "app/",
+  "app/index.html",
+  "app/dashboard/",
+  "app/dashboard/index.html",
+  "css/styles.css",
+  "css/app.css",
+  "js/config.js",
+  "js/main.js",
+  "js/app.js",
+  "manifest.json",
+  "icons/icon.svg"
 ];
 
 self.addEventListener("install", (e) => {
@@ -45,7 +45,7 @@ self.addEventListener("fetch", (e) => {
   // Navegaciones: red primero, cae a cache si no hay conexión.
   if (request.mode === "navigate") {
     e.respondWith(
-      fetch(request).catch(() => caches.match(request).then((r) => r || caches.match("/index.html")))
+      fetch(request).catch(() => caches.match(request).then((r) => r || caches.match("index.html")))
     );
     return;
   }

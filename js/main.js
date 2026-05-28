@@ -139,7 +139,7 @@
         if (!sb) { show("El acceso con Google aún no está disponible. Regístrate con el formulario.", "err"); return; }
         sb.auth.signInWithOAuth({
           provider: "google",
-          options: { redirectTo: window.location.origin + "/#registro" }
+          options: { redirectTo: window.location.href.split("#")[0] }
         }).then(function (r) {
           if (r && r.error) show("No se pudo iniciar con Google. Usa el formulario, por favor.", "err");
         });
@@ -200,7 +200,9 @@
   /* ---------- PWA: registrar service worker ---------- */
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
-      navigator.serviceWorker.register("/sw.js").catch(function () {});
+      var m = document.querySelector('link[rel="manifest"]');
+      var base = m ? m.href.replace(/manifest\.json.*$/, "") : "./";
+      navigator.serviceWorker.register(base + "sw.js", { scope: base }).catch(function () {});
     });
   }
 })();

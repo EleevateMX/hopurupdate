@@ -10,7 +10,9 @@
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
-      navigator.serviceWorker.register("/sw.js").catch(function () {});
+      var m = document.querySelector('link[rel="manifest"]');
+      var base = m ? m.href.replace(/manifest\.json.*$/, "") : "./";
+      navigator.serviceWorker.register(base + "sw.js", { scope: base }).catch(function () {});
     });
   }
 
@@ -57,7 +59,7 @@
 
     if (isStandalone && installBtn) {
       installBtn.textContent = "Abrir el panel";
-      installBtn.addEventListener("click", function () { window.location.href = "/app/dashboard/"; });
+      installBtn.addEventListener("click", function () { window.location.href = "dashboard/"; });
     } else if (installBtn) {
       installBtn.addEventListener("click", function () {
         if (deferred) {
