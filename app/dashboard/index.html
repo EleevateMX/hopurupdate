@@ -83,10 +83,16 @@
           </div>
         </div>
 
+        <div class="notif" id="notifPrompt" style="margin-top:18px;display:none">
+          <span class="notif__ic"><svg class="ic"><use href="#i-bell"/></svg></span>
+          <div><b>Activa las notificaciones</b><small>Entérate de cada panel y aviso del foro.</small></div>
+          <button id="notifPromptBtn">Activar</button>
+        </div>
+
         <div class="app-section-title">Confirma tu asistencia</div>
         <div class="access" id="access">
           <h3>Ya tienes tu acceso</h3>
-          <p class="sub">Si entraste con tu QR, inicia con Google y deja tu teléfono para confirmarte y mantenerte informado.</p>
+          <p class="sub" id="accessSub">Si entraste con tu QR, inicia con Google y deja tu teléfono para confirmarte y mantenerte informado.</p>
           <button type="button" class="btn-google" id="accessGoogle">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
             Continuar con Google
@@ -97,7 +103,7 @@
             <button type="submit" class="btn btn--primary btn--block" id="accessSave">Confirmar mi teléfono</button>
           </form>
           <div class="access__msg" id="accessMsg" role="status" aria-live="polite"></div>
-          <p class="sub" style="margin-top:12px">¿Sin Google? <a href="../../#registro" style="color:var(--c1-deep);font-weight:700">Regístrate aquí</a>.</p>
+          <p class="sub" id="accessAlt" style="margin-top:12px">¿Sin Google? <a href="../../#registro" style="color:var(--c1-deep);font-weight:700">Regístrate aquí</a>.</p>
         </div>
 
         <div class="app-section-title">Explora</div>

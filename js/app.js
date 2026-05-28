@@ -192,6 +192,9 @@
 
     // ----- Notificaciones push -----
     var notifBtn = document.getElementById("notifBtn");
+    var notifPrompt = document.getElementById("notifPrompt");
+    var notifPromptBtn = document.getElementById("notifPromptBtn");
+    var pushSupported = ("Notification" in window) && ("serviceWorker" in navigator) && ("PushManager" in window);
     function urlB64ToUint8(s) {
       var pad = "=".repeat((4 - s.length % 4) % 4);
       var b = (s + pad).replace(/-/g, "+").replace(/_/g, "/");
@@ -199,26 +202,34 @@
       for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
       return arr;
     }
-    if (notifBtn) {
-      var pushOk = ("Notification" in window) && ("serviceWorker" in navigator) && ("PushManager" in window);
-      if (!pushOk) { notifBtn.textContent = "No disponible"; notifBtn.disabled = true; }
-      else if (Notification.permission === "granted") { var bar = notifBtn.closest(".notif"); if (bar) bar.style.display = "none"; }
-      notifBtn.addEventListener("click", function () {
-        if (!CFG.PUSH_PUBLIC_KEY) { notifBtn.textContent = "Pronto"; return; }
-        Notification.requestPermission().then(function (perm) {
-          if (perm !== "granted") return;
-          navigator.serviceWorker.ready.then(function (reg) {
-            return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(CFG.PUSH_PUBLIC_KEY) });
-          }).then(function (sub) {
-            var j = sub.toJSON();
-            if (sb) sb.from(CFG.PUSH_SUB_TABLE || "hopur_push_subscriptions").insert({
-              endpoint: sub.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, user_agent: navigator.userAgent
-            });
-            notifBtn.textContent = "Activadas"; notifBtn.disabled = true;
-          }).catch(function () { notifBtn.textContent = "Reintentar"; });
-        });
+    function updateNotifUI() {
+      var granted = pushSupported && Notification.permission === "granted";
+      var show = pushSupported && !granted;   // recomendar SOLO si aún no las activó
+      if (notifPrompt) notifPrompt.style.display = show ? "" : "none";
+      var bar = notifBtn ? notifBtn.closest(".notif") : null;
+      if (bar) bar.style.display = show ? "" : "none";
+      if (notifBtn && !pushSupported) { notifBtn.textContent = "No disponible"; notifBtn.disabled = true; }
+    }
+    function subscribePush(btn) {
+      if (!pushSupported) return;
+      if (!CFG.PUSH_PUBLIC_KEY) { if (btn) btn.textContent = "Pronto"; return; }
+      if (btn) { btn.disabled = true; btn.textContent = "Activando…"; }
+      Notification.requestPermission().then(function (perm) {
+        if (perm !== "granted") { if (btn) { btn.disabled = false; btn.textContent = "Activar"; } updateNotifUI(); return; }
+        navigator.serviceWorker.ready.then(function (reg) {
+          return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(CFG.PUSH_PUBLIC_KEY) });
+        }).then(function (sub) {
+          var j = sub.toJSON();
+          if (sb) sb.from(CFG.PUSH_SUB_TABLE || "hopur_push_subscriptions").insert({
+            endpoint: sub.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, user_agent: navigator.userAgent
+          });
+          updateNotifUI();
+        }).catch(function () { if (btn) { btn.disabled = false; btn.textContent = "Reintentar"; } });
       });
     }
+    if (notifBtn) notifBtn.addEventListener("click", function () { subscribePush(notifBtn); });
+    if (notifPromptBtn) notifPromptBtn.addEventListener("click", function () { subscribePush(notifPromptBtn); });
+    updateNotifUI();
 
     // ----- Acceso: Google + teléfono (para quien ya tiene QR) -----
     var gBtn = document.getElementById("accessGoogle");
@@ -229,23 +240,34 @@
     var aMsg = document.getElementById("accessMsg");
     var gUser = null;
     function aShow(t, k) { if (!aMsg) return; aMsg.textContent = t; aMsg.className = "access__msg is-show " + (k || "ok"); }
+    function applyAccessSession(s) {
+      var alt = document.getElementById("accessAlt"), sub = document.getElementById("accessSub");
+      if (s && s.user) {
+        gUser = s.user; var m = s.user.user_metadata || {};
+        if (aName) aName.textContent = (m.full_name || m.name || s.user.email || "asistente");
+        if (aWho) aWho.classList.add("is-on");
+        if (aForm) aForm.style.display = "block";
+        if (gBtn) gBtn.style.display = "none";
+        if (alt) alt.style.display = "none";   // con sesión: sin "Regístrate", solo confirmar teléfono
+        if (sub) sub.style.display = "none";
+      } else {
+        gUser = null;
+        if (aWho) aWho.classList.remove("is-on");
+        if (aForm) aForm.style.display = "none";
+        if (gBtn) gBtn.style.display = "";
+        if (alt) alt.style.display = "";
+        if (sub) sub.style.display = "";
+      }
+    }
     if (sb && gBtn) {
-      sb.auth.getSession().then(function (res) {
-        var s = res && res.data && res.data.session;
-        if (s && s.user) {
-          gUser = s.user; var m = s.user.user_metadata || {};
-          if (aName) aName.textContent = (m.full_name || m.name || s.user.email || "asistente");
-          if (aWho) aWho.classList.add("is-on");
-          if (aForm) aForm.style.display = "block";
-          gBtn.style.display = "none";
-        }
-      }).catch(function () {});
+      sb.auth.getSession().then(function (res) { applyAccessSession(res && res.data && res.data.session); }).catch(function () {});
+      sb.auth.onAuthStateChange(function (_e, session) { applyAccessSession(session); });
       gBtn.addEventListener("click", function () {
         sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.href.split("#")[0] } })
-          .then(function (r) { if (r && r.error) aShow("No se pudo iniciar con Google. Usa el registro del sitio.", "err"); });
+          .then(function (r) { if (r && r.error) aShow("No se pudo iniciar con Google. Intenta de nuevo.", "err"); });
       });
     } else if (gBtn) {
-      gBtn.addEventListener("click", function () { aShow("Inicio con Google no disponible aún. Usa el registro del sitio.", "err"); });
+      gBtn.addEventListener("click", function () { aShow("Inicio con Google no disponible aún.", "err"); });
     }
     if (aForm) {
       aForm.addEventListener("submit", function (e) {
