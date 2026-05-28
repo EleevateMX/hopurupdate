@@ -272,9 +272,9 @@
         }).then(function (sub) {
           var j = sub.toJSON();
           if (!sb) { notifSay("No hay conexión con Supabase para guardar la suscripción.", true); if (btn) { btn.disabled = false; btn.textContent = "Reintentar"; } return; }
-          return sb.from(CFG.PUSH_SUB_TABLE || "hopur_push_subscriptions").upsert({
-            endpoint: sub.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, user_agent: navigator.userAgent
-          }, { onConflict: "endpoint", ignoreDuplicates: true }).then(function (r) {
+          return sb.rpc("hopur_save_push_subscription", {
+            p_endpoint: sub.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth, p_user_agent: navigator.userAgent
+          }).then(function (r) {
             if (r && r.error) {
               notifSay("No se pudo guardar la suscripción: " + (r.error.message || r.error), true);
               if (btn) { btn.disabled = false; btn.textContent = "Reintentar"; }

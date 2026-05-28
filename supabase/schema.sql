@@ -121,6 +121,28 @@ create policy hopur_push_insert_anon
   for insert to anon, authenticated
   with check (true);
 
+-- Guardado robusto de suscripciones: función SECURITY DEFINER que inserta
+-- saltándose RLS de forma segura (solo escribe, no expone lectura). El cliente
+-- llama a esto con sb.rpc('hopur_save_push_subscription', {...}); así no
+-- dependemos de que la política de INSERT esté perfecta.
+create or replace function public.hopur_save_push_subscription(
+  p_endpoint text, p_p256dh text, p_auth text, p_user_agent text default null
+) returns void
+language sql
+security definer
+set search_path = public
+as $$
+  insert into public.hopur_push_subscriptions (endpoint, p256dh, auth, user_agent)
+  values (p_endpoint, p_p256dh, p_auth, p_user_agent)
+  on conflict (endpoint) do update
+    set p256dh = excluded.p256dh,
+        auth = excluded.auth,
+        user_agent = excluded.user_agent;
+$$;
+
+revoke all on function public.hopur_save_push_subscription(text, text, text, text) from public;
+grant execute on function public.hopur_save_push_subscription(text, text, text, text) to anon, authenticated;
+
 
 -- ============================================================
 -- ADMINS — quién puede publicar en el blog y enviar push
