@@ -44,13 +44,13 @@
   if (!sb) { msg($("adLoginMsg"), "No se pudo conectar con Supabase. Revisa tu conexión.", "err"); return; }
 
   // ---- Notificar (llama a la Edge Function "notify") ----
-  function sendPush(title, body) {
+  function sendPush(title, body, url) {
     return sb.auth.getSession().then(function (res) {
       var token = res && res.data && res.data.session && res.data.session.access_token;
       return fetch(CFG.SUPABASE_URL + "/functions/v1/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json", "apikey": CFG.SUPABASE_KEY, "Authorization": "Bearer " + token },
-        body: JSON.stringify({ title: title, body: body, url: "app/dashboard/#noticias" })
+        body: JSON.stringify({ title: title, body: body, url: url || "app/dashboard/#noticias" })
       }).then(function (r) {
         if (!r.ok) throw new Error("HTTP " + r.status);
         return r.json().catch(function () { return {}; });
@@ -160,8 +160,9 @@
     var t = ($("nTitle").value || "").trim();
     var b = ($("nBody").value || "").trim();
     if (!t) { msg($("nMsg"), "Escribe un título.", "err"); return; }
+    var dest = ($("nDest") && $("nDest").value) || "app/dashboard/#noticias";
     var btn = $("nSend"); btn.disabled = true; btn.textContent = "Enviando…";
-    sendPush(t, b)
+    sendPush(t, b, dest)
       .then(function (res) { btn.disabled = false; btn.textContent = "Enviar push"; msg($("nMsg"), "Enviado (" + ((res && res.sent) || 0) + " envíos).", "ok"); $("nTitle").value = ""; $("nBody").value = ""; })
       .catch(function () { btn.disabled = false; btn.textContent = "Enviar push"; msg($("nMsg"), "No se pudo enviar. Asegúrate de haber desplegado la función 'notify' y configurado las llaves VAPID.", "err"); });
   });

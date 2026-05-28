@@ -36,6 +36,7 @@
     label.fl{display:block;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:12px 0 5px}
     .ad-card input[type=text],.ad-card input[type=email],.ad-card textarea{width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-size:15px;font-family:var(--font);color:var(--c2);box-sizing:border-box}
     .ad-card textarea{min-height:80px;resize:vertical;line-height:1.5}
+    .ad-card select{width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-size:15px;font-family:var(--font);color:var(--c2);box-sizing:border-box}
     .ad-card input:focus,.ad-card textarea:focus{outline:none;border-color:var(--c1);box-shadow:0 0 0 4px rgba(67,199,201,.15)}
     .chkrow{display:flex;align-items:center;gap:9px;margin:14px 0;font-size:14px;color:var(--tx)}
     .chkrow input{width:18px;height:18px;accent-color:var(--c1)}
@@ -126,6 +127,12 @@
         <input id="nTitle" type="text" placeholder="Ej. Comienza la clausura">
         <label class="fl" for="nBody">Mensaje</label>
         <input id="nBody" type="text" placeholder="Te esperamos en el auditorio principal.">
+        <label class="fl" for="nDest">Al tocar la notificación, abrir</label>
+        <select id="nDest">
+          <option value="app/dashboard/#noticias">Última hora (blog)</option>
+          <option value="app/dashboard/#programa">Programa</option>
+          <option value="app/dashboard/#inicio">Inicio del evento</option>
+        </select>
         <button class="btn btn--secondary btn--block" id="nSend" style="margin-top:12px">Enviar push</button>
         <div class="msg" id="nMsg" role="status" aria-live="polite"></div>
       </section>
