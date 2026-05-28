@@ -53,6 +53,22 @@
     .post-row b{font-size:14.5px;color:var(--c2);display:block}
     .post-row small{font-size:12px;color:var(--muted)}
     .post-row button{margin-left:auto;flex:0 0 auto;background:none;border:1px solid var(--line);color:#c01e4f;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
+    .ad-card input[type=search]{width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-size:15px;font-family:var(--font);color:var(--c2);box-sizing:border-box;margin-bottom:12px}
+    .ad-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+    .ad-head h2{margin:0}
+    .ad-head .acts{display:flex;gap:8px;flex-wrap:wrap}
+    .ad-head .acts button{flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--c2);border-radius:10px;padding:7px 12px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:var(--font)}
+    .ad-head .acts button.pri{background:var(--c1);border-color:var(--c1);color:#063a3a}
+    .reg-list{max-height:440px;overflow:auto;border:1px solid var(--line);border-radius:14px}
+    .reg-row{padding:12px 14px;border-bottom:1px solid var(--line)}
+    .reg-row:last-child{border-bottom:0}
+    .reg-row .top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+    .reg-row .nm{font-size:14.5px;font-weight:800;color:var(--c2)}
+    .reg-row .src{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);flex:0 0 auto}
+    .reg-row .role{font-size:12.5px;color:var(--muted);margin-top:1px}
+    .reg-row .meta{font-size:12.5px;color:var(--tx);margin-top:5px;display:flex;flex-wrap:wrap;gap:3px 14px}
+    .reg-row .meta a{color:var(--c1-deep);text-decoration:none;font-weight:700}
+    .reg-empty{padding:16px;color:var(--muted);font-size:13px}
     .hide{display:none}
   </style>
 </head>
@@ -101,6 +117,19 @@
         <div class="ad-stat"><strong id="statRegs">—</strong><span>Registrados</span></div>
         <div class="ad-stat"><strong id="statSubs">—</strong><span>Suscriptores push</span></div>
       </div>
+
+      <section class="ad-card">
+        <div class="ad-head">
+          <h2>Registrados</h2>
+          <div class="acts">
+            <button type="button" id="regReload">Actualizar</button>
+            <button type="button" id="regCsv" class="pri">Descargar CSV</button>
+          </div>
+        </div>
+        <p class="sub">Histórico completo de quienes se registraron (sitio y app), con cargo y empresa.</p>
+        <input id="regSearch" type="search" placeholder="Buscar por nombre, empresa, cargo o correo…">
+        <div id="regList" class="reg-list"><p class="reg-empty">Cargando…</p></div>
+      </section>
 
       <section class="ad-card">
         <h2>Publicar en «última hora»</h2>

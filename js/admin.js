@@ -70,7 +70,7 @@
   // ---- Sesión / autorización ----
   function checkAdmin() {
     sb.from("hopur_admins").select("email").then(function (r) {
-      if (!r.error && r.data && r.data.length) { show("adApp"); loadStats(); loadPosts(); }
+      if (!r.error && r.data && r.data.length) { show("adApp"); loadStats(); loadPosts(); loadRegs(); }
       else { show("adDenied"); }
     }).catch(function () { show("adDenied"); });
   }
@@ -111,6 +111,66 @@
     sb.from(CFG.PUSH_SUB_TABLE || "hopur_push_subscriptions").select("*", { count: "exact", head: true })
       .then(function (r) { $("statSubs").textContent = (r.count != null ? r.count : "—"); });
   }
+
+  // ---- Registrados (histórico) ----
+  var regCache = [];
+  function regRowHtml(c) {
+    var name = ((c.first_name || "") + " " + (c.last_name || "")).trim() || "(sin nombre)";
+    var role = [c.cargo, c.empresa].filter(Boolean).join(" · ");
+    var tel = (c.phone || "").replace(/[^\d]/g, "");
+    var meta = [];
+    if (c.email) meta.push('<a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>');
+    if (c.phone) meta.push('<a href="https://wa.me/' + esc(tel) + '" target="_blank" rel="noopener">' + esc(c.phone) + '</a>');
+    if (c.created_at) meta.push(esc(new Date(c.created_at).toLocaleString("es-MX")));
+    return '<div class="reg-row"><div class="top"><span class="nm">' + esc(name) + '</span><span class="src">' + esc(c.source || "web") + '</span></div>'
+      + (role ? '<div class="role">' + esc(role) + '</div>' : '')
+      + (meta.length ? '<div class="meta">' + meta.join("") + '</div>' : '') + '</div>';
+  }
+  function renderRegs(rows) {
+    var box = $("regList");
+    if (!rows || !rows.length) { box.innerHTML = '<p class="reg-empty">Sin registros que coincidan.</p>'; return; }
+    box.innerHTML = rows.map(regRowHtml).join("");
+  }
+  function filterRegs() {
+    var q = ($("regSearch").value || "").trim().toLowerCase();
+    if (!q) { renderRegs(regCache); return; }
+    renderRegs(regCache.filter(function (c) {
+      return [c.first_name, c.last_name, c.cargo, c.empresa, c.email, c.phone].join(" ").toLowerCase().indexOf(q) !== -1;
+    }));
+  }
+  function loadRegs() {
+    var box = $("regList"); box.innerHTML = '<p class="reg-empty">Cargando…</p>';
+    sb.from(CFG.CONTACT_TABLE || "hopur_contacts").select("*").order("created_at", { ascending: false }).limit(5000)
+      .then(function (r) {
+        if (r.error) { box.innerHTML = '<p class="reg-empty">No se pudo cargar (¿tu correo está en hopur_admins?): ' + esc(r.error.message) + '</p>'; return; }
+        regCache = r.data || [];
+        $("statRegs").textContent = regCache.length;
+        filterRegs();
+      })
+      .catch(function () { box.innerHTML = '<p class="reg-empty">Error de conexión.</p>'; });
+  }
+  function csvCell(v) {
+    v = (v == null ? "" : String(v));
+    if (/[",\n\r]/.test(v)) v = '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  }
+  function downloadRegsCsv() {
+    if (!regCache.length) { alert("Aún no hay registros para exportar."); return; }
+    var head = ["Nombre", "Apellido", "Cargo", "Empresa", "Correo", "Telefono", "Origen", "Fecha"];
+    var lines = [head.join(",")];
+    regCache.forEach(function (c) {
+      lines.push([c.first_name, c.last_name, c.cargo, c.empresa, c.email, c.phone, c.source,
+        c.created_at ? new Date(c.created_at).toISOString() : ""].map(csvCell).join(","));
+    });
+    var blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = "registrados-hopur-" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+  }
+  $("regReload").addEventListener("click", loadRegs);
+  $("regCsv").addEventListener("click", downloadRegsCsv);
+  $("regSearch").addEventListener("input", filterRegs);
 
   // ---- Posts ----
   function loadPosts() {
