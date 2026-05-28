@@ -152,3 +152,72 @@ create policy hopur_push_admin_select on public.hopur_push_subscriptions
 
 -- 👉 IMPORTANTE: date de alta como admin (cambia el correo por el tuyo de Google):
 --    insert into public.hopur_admins (email) values ('tucorreo@gmail.com');
+
+
+-- ============================================================
+-- MURO / COMUNIDAD (publicaciones, reacciones y comentarios)
+-- ============================================================
+create table if not exists public.hopur_wall_posts (
+  id            uuid primary key default gen_random_uuid(),
+  author_id     uuid not null,
+  author_name   text,
+  author_avatar text,
+  body          text,
+  image_url     text,
+  created_at    timestamptz not null default now()
+);
+create index if not exists hopur_wall_posts_idx on public.hopur_wall_posts (created_at desc);
+alter table public.hopur_wall_posts enable row level security;
+drop policy if exists hopur_wall_posts_read on public.hopur_wall_posts;
+create policy hopur_wall_posts_read on public.hopur_wall_posts for select to anon, authenticated using (true);
+drop policy if exists hopur_wall_posts_insert on public.hopur_wall_posts;
+create policy hopur_wall_posts_insert on public.hopur_wall_posts for insert to authenticated with check (auth.uid() = author_id);
+drop policy if exists hopur_wall_posts_delete on public.hopur_wall_posts;
+create policy hopur_wall_posts_delete on public.hopur_wall_posts for delete to authenticated
+  using (auth.uid() = author_id or exists (select 1 from public.hopur_admins a where lower(a.email) = lower(auth.jwt() ->> 'email')));
+
+create table if not exists public.hopur_wall_comments (
+  id            uuid primary key default gen_random_uuid(),
+  post_id       uuid not null references public.hopur_wall_posts(id) on delete cascade,
+  author_id     uuid not null,
+  author_name   text,
+  author_avatar text,
+  body          text not null,
+  created_at    timestamptz not null default now()
+);
+create index if not exists hopur_wall_comments_idx on public.hopur_wall_comments (post_id, created_at);
+alter table public.hopur_wall_comments enable row level security;
+drop policy if exists hopur_wall_comments_read on public.hopur_wall_comments;
+create policy hopur_wall_comments_read on public.hopur_wall_comments for select to anon, authenticated using (true);
+drop policy if exists hopur_wall_comments_insert on public.hopur_wall_comments;
+create policy hopur_wall_comments_insert on public.hopur_wall_comments for insert to authenticated with check (auth.uid() = author_id);
+drop policy if exists hopur_wall_comments_delete on public.hopur_wall_comments;
+create policy hopur_wall_comments_delete on public.hopur_wall_comments for delete to authenticated
+  using (auth.uid() = author_id or exists (select 1 from public.hopur_admins a where lower(a.email) = lower(auth.jwt() ->> 'email')));
+
+create table if not exists public.hopur_wall_reactions (
+  post_id    uuid not null references public.hopur_wall_posts(id) on delete cascade,
+  user_id    uuid not null,
+  type       text not null default 'like',  -- 'like' | 'love'
+  created_at timestamptz not null default now(),
+  primary key (post_id, user_id)
+);
+alter table public.hopur_wall_reactions enable row level security;
+drop policy if exists hopur_wall_react_read on public.hopur_wall_reactions;
+create policy hopur_wall_react_read on public.hopur_wall_reactions for select to anon, authenticated using (true);
+drop policy if exists hopur_wall_react_write on public.hopur_wall_reactions;
+create policy hopur_wall_react_write on public.hopur_wall_reactions for insert to authenticated with check (auth.uid() = user_id);
+drop policy if exists hopur_wall_react_update on public.hopur_wall_reactions;
+create policy hopur_wall_react_update on public.hopur_wall_reactions for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists hopur_wall_react_delete on public.hopur_wall_reactions;
+create policy hopur_wall_react_delete on public.hopur_wall_reactions for delete to authenticated using (auth.uid() = user_id);
+
+-- Almacenamiento de fotos del muro (bucket público "wall").
+insert into storage.buckets (id, name, public) values ('wall', 'wall', true)
+  on conflict (id) do nothing;
+drop policy if exists hopur_wall_storage_read on storage.objects;
+create policy hopur_wall_storage_read on storage.objects for select to anon, authenticated using (bucket_id = 'wall');
+drop policy if exists hopur_wall_storage_insert on storage.objects;
+create policy hopur_wall_storage_insert on storage.objects for insert to authenticated with check (bucket_id = 'wall');
+drop policy if exists hopur_wall_storage_delete on storage.objects;
+create policy hopur_wall_storage_delete on storage.objects for delete to authenticated using (bucket_id = 'wall' and owner = auth.uid());

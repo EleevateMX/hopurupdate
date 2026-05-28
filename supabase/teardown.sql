@@ -22,3 +22,10 @@ drop policy if exists hopur_contacts_admin_select on public.hopur_contacts;
 drop policy if exists hopur_push_admin_select on public.hopur_push_subscriptions;
 drop policy if exists hopur_admins_self on public.hopur_admins;
 drop table  if exists public.hopur_admins cascade;
+
+drop table if exists public.hopur_wall_reactions cascade;
+drop table if exists public.hopur_wall_comments cascade;
+drop table if exists public.hopur_wall_posts cascade;
+drop policy if exists hopur_wall_storage_read on storage.objects;
+drop policy if exists hopur_wall_storage_insert on storage.objects;
+drop policy if exists hopur_wall_storage_delete on storage.objects;
