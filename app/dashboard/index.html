@@ -91,19 +91,22 @@
 
         <div class="app-section-title" id="accessTitle">Confirma tu asistencia</div>
         <div class="access" id="access">
-          <h3>Ya tienes tu acceso</h3>
-          <p class="sub" id="accessSub">Si entraste con tu QR, inicia con Google y deja tu teléfono para confirmarte y mantenerte informado.</p>
+          <h3>Regístrate y confirma tu asistencia</h3>
+          <p class="sub" id="accessSub">Con Google es más rápido (tomamos tu nombre y correo). Si no, llena tus datos. El teléfono siempre lo pedimos para confirmarte.</p>
           <button type="button" class="btn-google" id="accessGoogle">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
             Continuar con Google
           </button>
           <div class="access__who" id="accessWho"><svg class="ic ic--sm" style="color:var(--c1-deep)"><use href="#i-info"/></svg><span>Hola, <b id="accessName">—</b></span></div>
-          <form class="access__form" id="accessForm" style="display:none" novalidate>
+          <form class="access__form" id="accessForm" novalidate>
+            <input id="accessFullName" type="text" autocomplete="name" placeholder="Nombre completo" required>
+            <input id="accessCargo" type="text" autocomplete="organization-title" placeholder="Cargo / puesto" required>
+            <input id="accessEmpresa" type="text" autocomplete="organization" placeholder="Empresa / organización" required>
+            <input id="accessEmail" type="email" inputmode="email" autocomplete="email" placeholder="Correo electrónico" required>
             <input id="accessPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Tu teléfono / WhatsApp (+52 999…)" required>
-            <button type="submit" class="btn btn--primary btn--block" id="accessSave">Confirmar mi teléfono</button>
+            <button type="submit" class="btn btn--primary btn--block" id="accessSave">Enviar mi registro</button>
           </form>
           <div class="access__msg" id="accessMsg" role="status" aria-live="polite"></div>
-          <p class="sub" id="accessAlt" style="margin-top:12px">¿Sin Google? <a href="../../#registro" style="color:var(--c1-deep);font-weight:700">Regístrate aquí</a>.</p>
         </div>
 
         <div class="app-section-title">Explora</div>

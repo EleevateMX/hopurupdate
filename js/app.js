@@ -299,31 +299,34 @@
     // ----- Acceso: Google + teléfono (para quien ya tiene QR) -----
     var gBtn = document.getElementById("accessGoogle");
     var aForm = document.getElementById("accessForm");
+    var aFull = document.getElementById("accessFullName");
+    var aCargo = document.getElementById("accessCargo");
+    var aEmpresa = document.getElementById("accessEmpresa");
+    var aEmail = document.getElementById("accessEmail");
     var aPhone = document.getElementById("accessPhone");
     var aWho = document.getElementById("accessWho");
     var aName = document.getElementById("accessName");
     var aMsg = document.getElementById("accessMsg");
+    var aSave = document.getElementById("accessSave");
     var gUser = null;
     function aShow(t, k) { if (!aMsg) return; aMsg.textContent = t; aMsg.className = "access__msg is-show " + (k || "ok"); }
     function hideAccess() { var a = document.getElementById("access"), t = document.getElementById("accessTitle"); if (a) a.style.display = "none"; if (t) t.style.display = "none"; }
     try { if (localStorage.getItem("hopur_confirmed") === "1") hideAccess(); } catch (e) {}
     function applyAccessSession(s) {
-      var alt = document.getElementById("accessAlt"), sub = document.getElementById("accessSub");
       if (s && s.user) {
         gUser = s.user; var m = s.user.user_metadata || {};
         if (aName) aName.textContent = (m.full_name || m.name || s.user.email || "asistente");
+        if (aFull && !aFull.value) aFull.value = (m.full_name || m.name || "");
         if (aWho) aWho.classList.add("is-on");
-        if (aForm) aForm.style.display = "block";
+        if (aEmail) aEmail.style.display = "none";   // con Google el correo viene de tu cuenta
         if (gBtn) gBtn.style.display = "none";
-        if (alt) alt.style.display = "none";   // con sesión: sin "Regístrate", solo confirmar teléfono
-        if (sub) sub.style.display = "none";
+        if (aSave) aSave.textContent = "Confirmar mi asistencia";
       } else {
         gUser = null;
         if (aWho) aWho.classList.remove("is-on");
-        if (aForm) aForm.style.display = "none";
+        if (aEmail) aEmail.style.display = "";
         if (gBtn) gBtn.style.display = "";
-        if (alt) alt.style.display = "";
-        if (sub) sub.style.display = "";
+        if (aSave) aSave.textContent = "Enviar mi registro";
       }
     }
     if (sb && gBtn) {
@@ -337,29 +340,42 @@
       gBtn.addEventListener("click", function () { aShow("Inicio con Google no disponible aún.", "err"); });
     }
     if (aForm) {
+      var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       aForm.addEventListener("submit", function (e) {
         e.preventDefault();
-        var phone = (aPhone.value || "").trim();
+        if (!sb) { aShow("No hay conexión con el servidor. Intenta de nuevo.", "err"); return; }
+        var fullName = (aFull && aFull.value || "").trim();
+        var cargo = (aCargo && aCargo.value || "").trim();
+        var empresa = (aEmpresa && aEmpresa.value || "").trim();
+        var phone = (aPhone && aPhone.value || "").trim();
+        var email = gUser ? (gUser.email || "") : (aEmail && aEmail.value || "").trim();
+
+        if (fullName.split(/\s+/).filter(Boolean).length < 2) { aShow("Escribe tu nombre completo (nombre y apellido).", "err"); return; }
+        if (!cargo) { aShow("Escribe tu cargo o puesto.", "err"); return; }
+        if (!empresa) { aShow("Escribe tu empresa u organización.", "err"); return; }
         if (phone.replace(/\D/g, "").length < 7) { aShow("Escribe un teléfono válido.", "err"); return; }
-        if (!sb || !gUser) { aShow("Primero inicia con Google.", "err"); return; }
-        var m = gUser.user_metadata || {}, full = (m.full_name || m.name || "").trim().split(/\s+/);
-        var btn = document.getElementById("accessSave"); if (btn) { btn.disabled = true; btn.textContent = "Guardando…"; }
+        if (!EMAIL_RE.test(email)) { aShow(gUser ? "No pudimos leer tu correo de Google." : "Escribe un correo válido.", "err"); return; }
+
+        var parts = fullName.split(/\s+/).filter(Boolean);
+        var btn = aSave, prev = btn ? btn.textContent : ""; if (btn) { btn.disabled = true; btn.textContent = "Guardando…"; }
         sb.from(CFG.CONTACT_TABLE || "hopur_contacts").insert({
-          first_name: full[0] || (m.name || "Asistente"),
-          last_name: full.slice(1).join(" ") || ".",
+          first_name: parts[0],
+          last_name: parts.slice(1).join(" "),
+          cargo: cargo,
+          empresa: empresa,
           phone: phone,
-          email: gUser.email || "",
+          email: email,
           source: "app",
-          auth_user_id: gUser.id,
+          auth_user_id: gUser ? gUser.id : null,
           user_agent: navigator.userAgent
         }).then(function (r) {
-          if (btn) { btn.disabled = false; btn.textContent = "Confirmar mi teléfono"; }
+          if (btn) { btn.disabled = false; btn.textContent = prev; }
           if (r && r.error && r.error.code !== "23505") { aShow("No se pudo guardar. Intenta de nuevo.", "err"); return; }
-          aShow((r && r.error) ? "Ya estabas confirmado. ¡Te esperamos!" : "¡Listo! Tu asistencia quedó confirmada.", "ok");
+          aShow((r && r.error) ? "Ya estabas registrado. ¡Te esperamos!" : "¡Listo! Tu registro quedó confirmado.", "ok");
           try { localStorage.setItem("hopur_confirmed", "1"); } catch (e) {}
           setTimeout(hideAccess, 1000);
         }).catch(function () {
-          if (btn) { btn.disabled = false; btn.textContent = "Confirmar mi teléfono"; }
+          if (btn) { btn.disabled = false; btn.textContent = prev; }
           aShow("Sin conexión. Intenta de nuevo.", "err");
         });
       });

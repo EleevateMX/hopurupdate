@@ -98,10 +98,12 @@
     var googleBtn = document.getElementById("googleBtn");
     var fName = document.getElementById("firstName");
     var lName = document.getElementById("lastName");
+    var fCargo = document.getElementById("cargo");
+    var fEmpresa = document.getElementById("empresa");
     var fPhone = document.getElementById("phone");
     var fEmail = document.getElementById("email");
     var fConsent = document.getElementById("consent");
-    var fHoney = document.getElementById("company");
+    var fHoney = document.getElementById("website");
 
     var sb = null, googleUserId = null, source = "web";
     var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -128,9 +130,13 @@
         var full = (m.full_name || m.name || "").trim().split(" ");
         if (fName && !fName.value && full[0]) fName.value = full[0];
         if (lName && !lName.value && full.length > 1) lName.value = full.slice(1).join(" ");
-        if (fEmail && !fEmail.value && u.email) fEmail.value = u.email;
-        show("¡Listo! Solo confirma tu teléfono y envía tu registro.", "ok");
-        if (fPhone) fPhone.focus();
+        if (fEmail) {
+          if (u.email) fEmail.value = u.email;          // con Google el correo viene de tu cuenta
+          var emFld = fEmail.closest(".field");
+          if (emFld) emFld.style.display = "none";
+        }
+        show("¡Listo! Completa cargo, empresa y teléfono, y envía tu registro.", "ok");
+        if (fCargo) fCargo.focus();
       }).catch(function () {});
     }
 
@@ -152,6 +158,8 @@
 
       var first = (fName.value || "").trim();
       var last = (lName.value || "").trim();
+      var cargo = (fCargo.value || "").trim();
+      var empresa = (fEmpresa.value || "").trim();
       var phone = (fPhone.value || "").trim();
       var email = (fEmail.value || "").trim();
 
@@ -159,11 +167,13 @@
       var emailOk = EMAIL_RE.test(email);
       markInvalid(fName, !first);
       markInvalid(lName, !last);
+      markInvalid(fCargo, !cargo);
+      markInvalid(fEmpresa, !empresa);
       markInvalid(fPhone, !phoneOk);
       markInvalid(fEmail, !emailOk);
-      var bad = !first || !last || !phoneOk || !emailOk;
+      var bad = !first || !last || !cargo || !empresa || !phoneOk || !emailOk;
 
-      if (bad) { show("Revisa los campos marcados: nombre, apellido, teléfono y correo válidos.", "err"); return; }
+      if (bad) { show("Revisa los campos marcados: nombre, apellido, cargo, empresa, teléfono y correo válidos.", "err"); return; }
       if (fConsent && !fConsent.checked) { show("Necesitamos tu autorización para contactarte.", "err"); return; }
 
       if (!sb) { show("No pudimos conectar con el servidor. Escríbenos por WhatsApp y te registramos.", "err"); return; }
@@ -174,6 +184,8 @@
       sb.from(CFG.CONTACT_TABLE || "hopur_contacts").insert({
         first_name: first,
         last_name: last,
+        cargo: cargo,
+        empresa: empresa,
         phone: phone,
         email: email,
         source: source,

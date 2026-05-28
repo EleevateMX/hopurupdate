@@ -17,6 +17,8 @@ create table if not exists public.hopur_contacts (
   id           uuid primary key default gen_random_uuid(),
   first_name   text not null check (char_length(trim(first_name)) > 0),
   last_name    text not null check (char_length(trim(last_name)) > 0),
+  cargo        text,                          -- puesto / cargo
+  empresa      text,                          -- empresa / organización
   phone        text not null check (char_length(trim(phone)) >= 7),
   email        text not null check (position('@' in email) > 1),
   source       text not null default 'web',  -- 'web' | 'google' | 'app'
@@ -24,6 +26,10 @@ create table if not exists public.hopur_contacts (
   user_agent   text,
   created_at   timestamptz not null default now()
 );
+
+-- Si la tabla ya existía de una versión anterior, agrega las columnas nuevas.
+alter table public.hopur_contacts add column if not exists cargo   text;
+alter table public.hopur_contacts add column if not exists empresa text;
 
 -- Evita correos duplicados (sin distinguir mayúsculas/minúsculas).
 create unique index if not exists hopur_contacts_email_key
