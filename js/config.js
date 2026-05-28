@@ -13,7 +13,7 @@ window.HOPUR_CONFIG = {
   PUSH_SUB_TABLE: "hopur_push_subscriptions",
 
   // Clave pública VAPID para notificaciones push (es pública, va en el cliente).
-  PUSH_PUBLIC_KEY: "BLIcK2qqPcuVL1inJ5zaCpMnaRMqrWVeO0BNgbn1XAM16_tH-Z7xc9bPyo0T5RR31YE0BmAvSdewhxQI6Ki38p4",
+  PUSH_PUBLIC_KEY: "BBSv6SuNi9PnvfVGz4hL3akF7kk93qMBjxCeSxw9uK9tvpSQrnWQwEpMqHuYUgYfKBiKdgDF5GZ0FDVLd9jpT0A",
 
   // Slug de la Edge Function que envía push (el que aparece en su URL).
   NOTIFY_FN: "notify",
