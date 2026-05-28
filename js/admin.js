@@ -2,6 +2,32 @@
 // HOPUR · admin.js — panel para publicar en el blog y enviar push.
 // Requiere estar autenticado y que tu correo esté en hopur_admins.
 // ============================================================
+
+// --- Puerta de contraseña (capa ligera; la seguridad REAL es el allowlist
+//     hopur_admins + RLS en Supabase). ---
+(function gate() {
+  var GATE_HASH = "4e47315208d2ebc3a7b554c8e13d757561193951925467f0596048092db66e76";
+  var body = document.body, el = document.getElementById("gate");
+  function unlock() { body.classList.remove("locked"); if (el) el.style.display = "none"; }
+  if (sessionStorage.getItem("hopur_panel_ok") === "1") { unlock(); return; }
+  function sha256(s) {
+    if (window.crypto && crypto.subtle) {
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)).then(function (buf) {
+        return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+      });
+    }
+    return Promise.resolve("");
+  }
+  var form = document.getElementById("gateForm");
+  if (form) form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    sha256(document.getElementById("gatePw").value || "").then(function (h) {
+      if (h === GATE_HASH) { sessionStorage.setItem("hopur_panel_ok", "1"); unlock(); }
+      else { var m = document.getElementById("gateMsg"); if (m) { m.textContent = "Contraseña incorrecta."; m.className = "msg is-show err"; } }
+    });
+  });
+})();
+
 (function () {
   "use strict";
   var CFG = window.HOPUR_CONFIG || {};

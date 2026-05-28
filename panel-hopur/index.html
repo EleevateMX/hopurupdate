@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Panel HOPUR · Admin</title>
+  <title>Panel HOPUR</title>
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#43c7c9">
   <link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
@@ -14,6 +14,15 @@
   <style>
     body{background:#eef2f2}
     .wrap{max-width:760px;margin:0 auto;padding:22px 18px 60px}
+    body.locked .wrap{display:none}
+    .gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(135deg,#0f1414,#143b3c)}
+    body:not(.locked) .gate{display:none}
+    .gate__card{width:100%;max-width:360px;background:#fff;border-radius:24px;box-shadow:0 30px 70px rgba(0,0,0,.4);padding:30px 26px;text-align:center}
+    .gate__card img{height:34px;margin-bottom:16px}
+    .gate__card h1{margin:0 0 6px;font-size:20px;font-weight:900;color:var(--c2)}
+    .gate__card p{margin:0 0 16px;font-size:13px;color:var(--muted)}
+    .gate__card input{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:13px;border:1.5px solid var(--line);font-size:15px;font-family:var(--font);margin-bottom:12px}
+    .gate__card input:focus{outline:none;border-color:var(--c1);box-shadow:0 0 0 4px rgba(67,199,201,.15)}
     .ad-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
     .ad-bar img{height:28px}
     .ad-bar .who{font-size:13px;color:var(--muted)}
@@ -46,7 +55,20 @@
     .hide{display:none}
   </style>
 </head>
-<body>
+<body class="locked">
+
+  <!-- Puerta de contraseña -->
+  <div class="gate" id="gate">
+    <form class="gate__card" id="gateForm">
+      <img src="https://i.imgur.com/QNAIET0.png" alt="HOPUR">
+      <h1>Panel HOPUR</h1>
+      <p>Ingresa la contraseña para continuar.</p>
+      <input id="gatePw" type="password" placeholder="Contraseña" autocomplete="current-password" autofocus>
+      <button class="btn btn--primary btn--block" type="submit">Entrar</button>
+      <div class="msg" id="gateMsg" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+
   <div class="wrap">
     <div class="ad-bar">
       <img src="https://i.imgur.com/QNAIET0.png" alt="HOPUR">
