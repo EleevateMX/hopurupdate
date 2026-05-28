@@ -12,9 +12,8 @@ window.HOPUR_CONFIG = {
   POSTS_TABLE: "hopur_posts",
   PUSH_SUB_TABLE: "hopur_push_subscriptions",
 
-  // Clave pública VAPID para notificaciones push (la generas tú, ver SETUP).
-  // Si la dejas vacía, el botón de notificaciones avisa que aún no está activo.
-  PUSH_PUBLIC_KEY: "",
+  // Clave pública VAPID para notificaciones push (es pública, va en el cliente).
+  PUSH_PUBLIC_KEY: "BLIcK2qqPcuVL1inJ5zaCpMnaRMqrWVeO0BNgbn1XAM16_tH-Z7xc9bPyo0T5RR31YE0BmAvSdewhxQI6Ki38p4",
 
   // Fechas del foro Yucatalent (zona horaria de Yucatán, UTC-6).
   EVENT_START: "2026-05-27T09:00:00-06:00",
