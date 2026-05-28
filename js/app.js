@@ -120,21 +120,11 @@
       var now = new Date();
       var diff = start - now;
 
-      if (diff <= 0 && end && now < end) {
+      if ((diff <= 0 && end && now < end) || (end && now >= end)) {
         if (count) count.classList.add("is-hidden");
-        if (live) { live.setAttribute("data-state", "live"); }
-        if (liveText) liveText.textContent = "En vivo hoy";
-        return;
-      }
-      if (end && now >= end) {
-        if (count) count.classList.add("is-hidden");
-        if (live) live.setAttribute("data-state", "soon");
-        if (liveText) liveText.textContent = "Finalizó";
         return;
       }
       if (count) count.classList.remove("is-hidden");
-      if (live) live.setAttribute("data-state", "soon");
-      if (liveText) liveText.textContent = "Próximamente";
       setv("ac-days", Math.floor(diff / 86400000));
       setv("ac-hours", Math.floor(diff / 3600000) % 24);
       setv("ac-mins", Math.floor(diff / 60000) % 60);
@@ -212,7 +202,7 @@
     if (notifBtn) {
       var pushOk = ("Notification" in window) && ("serviceWorker" in navigator) && ("PushManager" in window);
       if (!pushOk) { notifBtn.textContent = "No disponible"; notifBtn.disabled = true; }
-      else if (Notification.permission === "granted") { notifBtn.textContent = "Activadas"; notifBtn.disabled = true; }
+      else if (Notification.permission === "granted") { var bar = notifBtn.closest(".notif"); if (bar) bar.style.display = "none"; }
       notifBtn.addEventListener("click", function () {
         if (!CFG.PUSH_PUBLIC_KEY) { notifBtn.textContent = "Pronto"; return; }
         Notification.requestPermission().then(function (perm) {
