@@ -46,3 +46,71 @@ create policy hopur_contacts_insert_anon
 
 -- Los registros se consultan/exportan desde el panel de Supabase
 -- o con la service_role key (server-side). NUNCA con la publishable.
+
+
+-- ============================================================
+-- BLOG / "Última hora" del evento
+-- ============================================================
+create table if not exists public.hopur_posts (
+  id           uuid primary key default gen_random_uuid(),
+  title        text not null,
+  panelist     text,                 -- quién habló
+  role         text,                 -- cargo / tema
+  summary      text,                 -- bajada / resumen corto
+  body         text,                 -- cuerpo (opcional)
+  points       text[] default '{}',  -- puntos clave (lista)
+  image_url    text,
+  published     boolean not null default true,
+  published_at timestamptz not null default now(),
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists hopur_posts_pub_idx
+  on public.hopur_posts (published_at desc);
+
+alter table public.hopur_posts enable row level security;
+
+-- Lectura pública SOLO de los posts publicados (es un blog).
+drop policy if exists hopur_posts_select_public on public.hopur_posts;
+create policy hopur_posts_select_public
+  on public.hopur_posts
+  for select to anon, authenticated
+  using (published = true);
+
+-- Escritura: solo desde el panel de Supabase / service_role (no se da a anon).
+
+-- Post de bienvenida para que el feed no aparezca vacío.
+insert into public.hopur_posts (title, panelist, role, summary, points)
+select
+  'Arranca Yucatalent 2026',
+  'HOPUR',
+  'Organización',
+  'Bienvenidos al I Foro Iberoamericano de Empleabilidad en Mérida. Aquí publicaremos lo más relevante de cada panel en tiempo real.',
+  array[
+    'Sigue el programa de los dos días desde la app.',
+    'Te avisaremos lo más importante de cada sesión.',
+    'Del diálogo a la acción: empleabilidad y talento.'
+  ]
+where not exists (select 1 from public.hopur_posts);
+
+
+-- ============================================================
+-- Suscripciones a notificaciones push (Web Push)
+-- ============================================================
+create table if not exists public.hopur_push_subscriptions (
+  id          uuid primary key default gen_random_uuid(),
+  endpoint    text not null unique,
+  p256dh      text not null,
+  auth        text not null,
+  user_agent  text,
+  created_at  timestamptz not null default now()
+);
+
+alter table public.hopur_push_subscriptions enable row level security;
+
+-- Permitir que cualquiera registre su suscripción (INSERT). Sin SELECT a anon.
+drop policy if exists hopur_push_insert_anon on public.hopur_push_subscriptions;
+create policy hopur_push_insert_anon
+  on public.hopur_push_subscriptions
+  for insert to anon, authenticated
+  with check (true);

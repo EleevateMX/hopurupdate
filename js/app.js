@@ -143,4 +143,150 @@
     tick();
     setInterval(tick, 1000);
   })();
+
+  /* ---------- Supabase: blog, notificaciones y acceso (Google) ---------- */
+  (function appModules() {
+    if (!document.getElementById("app")) return;
+    var sb = null;
+    if (window.supabase && CFG.SUPABASE_URL && CFG.SUPABASE_KEY) {
+      try { sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_KEY); } catch (e) { sb = null; }
+    }
+
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+      });
+    }
+
+    // ----- Blog / Última hora -----
+    var feed = document.getElementById("newsFeed");
+    function timeAgo(d) {
+      var t = new Date(d).getTime(); if (isNaN(t)) return "";
+      var s = Math.floor((Date.now() - t) / 1000);
+      if (s < 60) return "ahora";
+      if (s < 3600) return Math.floor(s / 60) + " min";
+      if (s < 86400) return Math.floor(s / 3600) + " h";
+      return new Date(d).toLocaleDateString("es-MX", { day: "2-digit", month: "short" });
+    }
+    function initials(n) {
+      n = (n || "H").trim(); var p = n.split(/\s+/);
+      return ((p[0][0] || "H") + (p[1] ? p[1][0] : "")).toUpperCase();
+    }
+    function renderPosts(rows) {
+      if (!feed) return;
+      if (!rows || !rows.length) {
+        feed.innerHTML = '<div class="feed__empty"><svg class="ic"><use href="#i-news"/></svg>Aún no hay publicaciones. Vuelve pronto para la última hora del foro.</div>';
+        return;
+      }
+      feed.innerHTML = rows.map(function (p) {
+        var pts = Array.isArray(p.points) ? p.points : [];
+        return '<article class="post">'
+          + '<div class="post__top"><span class="post__av">' + esc(initials(p.panelist || p.title)) + '</span>'
+          + '<span class="post__who"><strong>' + esc(p.panelist || "HOPUR") + '</strong><span>' + esc(p.role || "") + '</span></span>'
+          + '<span class="post__time">' + esc(timeAgo(p.published_at)) + '</span></div>'
+          + '<h4>' + esc(p.title) + '</h4>'
+          + (p.summary ? '<p>' + esc(p.summary) + '</p>' : '')
+          + (pts.length ? '<ul>' + pts.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '')
+          + '</article>';
+      }).join("");
+    }
+    if (feed) {
+      if (!sb) {
+        feed.innerHTML = '<div class="feed__empty"><svg class="ic"><use href="#i-news"/></svg>No se pudo conectar. Revisa tu internet.</div>';
+      } else {
+        sb.from(CFG.POSTS_TABLE || "hopur_posts").select("*").order("published_at", { ascending: false }).limit(30)
+          .then(function (r) { renderPosts(r.error ? [] : r.data); })
+          .catch(function () { renderPosts([]); });
+      }
+    }
+
+    // ----- Notificaciones push -----
+    var notifBtn = document.getElementById("notifBtn");
+    function urlB64ToUint8(s) {
+      var pad = "=".repeat((4 - s.length % 4) % 4);
+      var b = (s + pad).replace(/-/g, "+").replace(/_/g, "/");
+      var raw = atob(b), arr = new Uint8Array(raw.length);
+      for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+      return arr;
+    }
+    if (notifBtn) {
+      var pushOk = ("Notification" in window) && ("serviceWorker" in navigator) && ("PushManager" in window);
+      if (!pushOk) { notifBtn.textContent = "No disponible"; notifBtn.disabled = true; }
+      else if (Notification.permission === "granted") { notifBtn.textContent = "Activadas"; notifBtn.disabled = true; }
+      notifBtn.addEventListener("click", function () {
+        if (!CFG.PUSH_PUBLIC_KEY) { notifBtn.textContent = "Pronto"; return; }
+        Notification.requestPermission().then(function (perm) {
+          if (perm !== "granted") return;
+          navigator.serviceWorker.ready.then(function (reg) {
+            return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(CFG.PUSH_PUBLIC_KEY) });
+          }).then(function (sub) {
+            var j = sub.toJSON();
+            if (sb) sb.from(CFG.PUSH_SUB_TABLE || "hopur_push_subscriptions").insert({
+              endpoint: sub.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, user_agent: navigator.userAgent
+            });
+            notifBtn.textContent = "Activadas"; notifBtn.disabled = true;
+          }).catch(function () { notifBtn.textContent = "Reintentar"; });
+        });
+      });
+    }
+
+    // ----- Acceso: Google + teléfono (para quien ya tiene QR) -----
+    var gBtn = document.getElementById("accessGoogle");
+    var aForm = document.getElementById("accessForm");
+    var aPhone = document.getElementById("accessPhone");
+    var aWho = document.getElementById("accessWho");
+    var aName = document.getElementById("accessName");
+    var aMsg = document.getElementById("accessMsg");
+    var gUser = null;
+    function aShow(t, k) { if (!aMsg) return; aMsg.textContent = t; aMsg.className = "access__msg is-show " + (k || "ok"); }
+    if (sb && gBtn) {
+      sb.auth.getSession().then(function (res) {
+        var s = res && res.data && res.data.session;
+        if (s && s.user) {
+          gUser = s.user; var m = s.user.user_metadata || {};
+          if (aName) aName.textContent = (m.full_name || m.name || s.user.email || "asistente");
+          if (aWho) aWho.classList.add("is-on");
+          if (aForm) aForm.style.display = "block";
+          gBtn.style.display = "none";
+        }
+      }).catch(function () {});
+      gBtn.addEventListener("click", function () {
+        sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.href.split("#")[0] } })
+          .then(function (r) { if (r && r.error) aShow("No se pudo iniciar con Google. Usa el registro del sitio.", "err"); });
+      });
+    } else if (gBtn) {
+      gBtn.addEventListener("click", function () { aShow("Inicio con Google no disponible aún. Usa el registro del sitio.", "err"); });
+    }
+    if (aForm) {
+      aForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var phone = (aPhone.value || "").trim();
+        if (phone.replace(/\D/g, "").length < 7) { aShow("Escribe un teléfono válido.", "err"); return; }
+        if (!sb || !gUser) { aShow("Primero inicia con Google.", "err"); return; }
+        var m = gUser.user_metadata || {}, full = (m.full_name || m.name || "").trim().split(/\s+/);
+        var btn = document.getElementById("accessSave"); if (btn) { btn.disabled = true; btn.textContent = "Guardando…"; }
+        sb.from(CFG.CONTACT_TABLE || "hopur_contacts").insert({
+          first_name: full[0] || (m.name || "Asistente"),
+          last_name: full.slice(1).join(" ") || ".",
+          phone: phone,
+          email: gUser.email || "",
+          source: "app",
+          auth_user_id: gUser.id,
+          user_agent: navigator.userAgent
+        }).then(function (r) {
+          if (btn) { btn.disabled = false; btn.textContent = "Confirmar mi teléfono"; }
+          if (r && r.error) {
+            if (r.error.code === "23505") { aShow("Ya estabas registrado. ¡Te esperamos!", "ok"); }
+            else { aShow("No se pudo guardar. Intenta de nuevo.", "err"); }
+            return;
+          }
+          aShow("¡Listo! Tu asistencia quedó confirmada.", "ok");
+          aForm.style.display = "none";
+        }).catch(function () {
+          if (btn) { btn.disabled = false; btn.textContent = "Confirmar mi teléfono"; }
+          aShow("Sin conexión. Intenta de nuevo.", "err");
+        });
+      });
+    }
+  })();
 })();

@@ -5,9 +5,8 @@
       <stop offset="1" stop-color="#1f9fa1"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="112" fill="url(#g)"/>
-  <circle cx="256" cy="256" r="150" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="10" stroke-dasharray="14 18"/>
-  <text x="50%" y="50%" dy="0.36em" text-anchor="middle"
-        font-family="Montserrat, Arial, sans-serif" font-weight="900" font-size="150"
-        letter-spacing="-4" fill="#ffffff">H</text>
+  <rect width="512" height="512" rx="116" fill="url(#g)"/>
+  <!-- Marca HOPUR: la "o" (anillo + base) en blanco, centrada (segura para maskable) -->
+  <circle cx="256" cy="244" r="96" fill="none" stroke="#ffffff" stroke-width="42"/>
+  <rect x="206" y="356" width="100" height="32" rx="16" fill="#ffffff"/>
 </svg>

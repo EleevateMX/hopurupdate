@@ -189,6 +189,71 @@
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
+/* Acceso / confirmar asistencia (Google + teléfono) */
+.access{background:var(--glass);border:1px solid var(--glass-brd);border-radius:20px;box-shadow:var(--shadow);padding:18px;position:relative;overflow:hidden}
+.access h3{margin:0 0 4px;font-size:17px;font-weight:900;color:var(--c2)}
+.access p.sub{margin:0 0 14px;font-size:13px;color:var(--muted);line-height:1.5}
+.access .btn-google{width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#3c4043;border:1.5px solid #dadce0;border-radius:14px;font-weight:700;font-size:15px;font-family:var(--font);cursor:pointer;transition:box-shadow .2s,transform .2s}
+.access .btn-google:hover{box-shadow:0 6px 16px rgba(0,0,0,.12);transform:translateY(-2px)}
+.access .btn-google img{width:20px;height:20px}
+.access__who{display:none;align-items:center;gap:10px;background:rgba(67,199,201,.1);border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:13px;color:var(--c2)}
+.access__who.is-on{display:flex}
+.access__who b{font-weight:800}
+.access__form{margin-top:12px}
+.access__form input{width:100%;min-height:48px;padding:0 14px;border-radius:13px;border:1.5px solid var(--line);background:#fff;font-size:15px;font-family:var(--font);color:var(--c2);margin-bottom:10px}
+.access__form input:focus{outline:none;border-color:var(--c1);box-shadow:0 0 0 4px rgba(67,199,201,.16)}
+.access__msg{display:none;margin-top:10px;font-size:13px;font-weight:600;padding:10px 12px;border-radius:12px}
+.access__msg.is-show{display:block}
+.access__msg.ok{background:rgba(67,199,201,.12);color:var(--c1-deep)}
+.access__msg.err{background:rgba(224,36,94,.1);color:#c01e4f}
+
+/* Botón de notificaciones */
+.notif{display:flex;align-items:center;gap:12px;background:var(--glass);border:1px solid var(--glass-brd);border-radius:16px;box-shadow:var(--shadow);padding:14px 16px;margin-bottom:16px}
+.notif__ic{flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:var(--ring);color:var(--c1-dark);display:grid;place-items:center}
+.notif b{display:block;font-size:14px;color:var(--c2);font-weight:800}
+.notif small{font-size:12px;color:var(--muted)}
+.notif button{margin-left:auto;flex:0 0 auto;min-height:38px;padding:0 14px;border-radius:999px;border:0;background:var(--c1);color:#fff;font-weight:800;font-size:13px;font-family:var(--font);cursor:pointer}
+.notif button:disabled{opacity:.55;cursor:default}
+
+/* Blog / Última hora */
+.feed{display:grid;gap:14px}
+.post{background:var(--glass);border:1px solid var(--glass-brd);border-radius:18px;box-shadow:var(--shadow);padding:16px;position:relative;overflow:hidden}
+.post__top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.post__av{flex:0 0 40px;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:900;color:#fff;font-size:15px;background:linear-gradient(135deg,var(--c1),var(--c1-deep))}
+.post__who strong{display:block;font-size:13.5px;color:var(--c2);font-weight:800;line-height:1.1}
+.post__who span{font-size:11.5px;color:var(--muted)}
+.post__time{margin-left:auto;font-size:11px;color:var(--muted);white-space:nowrap}
+.post h4{margin:0 0 6px;font-size:16.5px;font-weight:900;color:var(--c2);line-height:1.2}
+.post p{margin:0 0 10px;font-size:13.6px;line-height:1.6;color:var(--muted)}
+.post ul{margin:0;padding-left:18px}
+.post li{font-size:13px;line-height:1.55;color:var(--tx);margin-bottom:5px}
+.post__tag{display:inline-block;margin-top:10px;background:rgba(67,199,201,.1);color:var(--c1-deep);font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:5px 9px;border-radius:999px}
+.feed__empty{text-align:center;color:var(--muted);font-size:14px;padding:30px 10px}
+.feed__empty .ic{width:40px;height:40px;margin:0 auto 10px;color:var(--c1)}
+
+/* Guía Mérida */
+.places{display:grid;gap:12px}
+.place{display:flex;gap:14px;background:var(--glass);border:1px solid var(--glass-brd);border-radius:18px;box-shadow:var(--shadow);padding:14px 16px;text-decoration:none}
+.place:hover{transform:translateY(-2px);transition:transform .2s}
+.place__ic{flex:0 0 44px;width:44px;height:44px;border-radius:13px;background:var(--ring);color:var(--c1-dark);display:grid;place-items:center}
+.place__b{flex:1;min-width:0}
+.place__b strong{display:block;font-size:15px;color:var(--c2);font-weight:800;line-height:1.2}
+.place__b span{display:block;font-size:12.6px;color:var(--muted);line-height:1.5;margin-top:3px}
+.place__go{align-self:center;color:var(--c1-deep);flex:0 0 auto}
+.place__go .ic{width:20px;height:20px}
+
+/* Lista de enlaces (HOPUR) */
+.linklist{display:grid;gap:10px;margin-top:6px}
+.linklist a{display:flex;align-items:center;gap:12px;background:var(--glass);border:1px solid var(--glass-brd);border-radius:14px;box-shadow:var(--shadow);padding:13px 14px;text-decoration:none;color:var(--c2);font-weight:700;font-size:14px}
+.linklist a .ic{width:20px;height:20px;color:var(--c1-deep);flex:0 0 auto}
+.linklist a small{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px}
+.linklist a .chev{margin-left:auto;color:#b9c4c4}
+
+@media (max-width:380px){
+  .app-tab span{font-size:9.5px}
+  .app-tab .ic{width:20px;height:20px}
+}
+
 /* Responsive */
 @media (max-width:900px){
   .apphero__wrap{grid-template-columns:1fr;text-align:center;gap:30px}

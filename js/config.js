@@ -7,8 +7,14 @@ window.HOPUR_CONFIG = {
   SUPABASE_URL: "https://urtduigdlkwbopczlbhr.supabase.co",
   SUPABASE_KEY: "sb_publishable_B8-1JSl7ix4X0j1xz1EduA_DqWMXhvV",
 
-  // Tabla de registro (prefijo hopur_ para no chocar con otros proyectos).
+  // Tablas (prefijo hopur_ para no chocar con otros proyectos).
   CONTACT_TABLE: "hopur_contacts",
+  POSTS_TABLE: "hopur_posts",
+  PUSH_SUB_TABLE: "hopur_push_subscriptions",
+
+  // Clave pública VAPID para notificaciones push (la generas tú, ver SETUP).
+  // Si la dejas vacía, el botón de notificaciones avisa que aún no está activo.
+  PUSH_PUBLIC_KEY: "",
 
   // Fechas del foro Yucatalent (zona horaria de Yucatán, UTC-6).
   EVENT_START: "2026-05-27T09:00:00-06:00",

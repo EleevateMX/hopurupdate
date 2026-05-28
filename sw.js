@@ -1,5 +1,5 @@
 // Service worker HOPUR — cache ligero "app shell" + offline básico.
-const CACHE = "hopur-v4";
+const CACHE = "hopur-v5";
 const ASSETS = [
   "./",
   "index.html",
@@ -63,6 +63,31 @@ self.addEventListener("fetch", (e) => {
         })
         .catch(() => cached);
       return cached || network;
+    })
+  );
+});
+
+// ---- Web Push: mostrar notificación al recibir un push ----
+self.addEventListener("push", (e) => {
+  let data = {};
+  try { data = e.data ? e.data.json() : {}; }
+  catch (_) { data = { title: "HOPUR", body: e.data ? e.data.text() : "" }; }
+  const title = data.title || "HOPUR · Yucatalent";
+  e.waitUntil(self.registration.showNotification(title, {
+    body: data.body || "",
+    icon: "icons/icon.svg",
+    badge: "icons/icon.svg",
+    data: { url: data.url || "app/dashboard/#noticias" }
+  }));
+});
+
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || "app/dashboard/#noticias";
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const c of list) { if ("focus" in c) return c.focus(); }
+      if (self.clients.openWindow) return self.clients.openWindow(url);
     })
   );
 });
