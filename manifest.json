@@ -1,0 +1,22 @@
+{
+  "name": "HOPUR · Yucatalent",
+  "short_name": "HOPUR",
+  "description": "Foro Iberoamericano de Empleabilidad Yucatalent y consultoría estratégica HOPUR.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f3f3",
+  "theme_color": "#43c7c9",
+  "lang": "es-MX",
+  "categories": ["business", "education", "events"],
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Programa del jueves", "url": "/app/#programa" },
+    { "name": "Registrarme", "url": "/#registro" }
+  ]
+}
