@@ -226,21 +226,34 @@
       if (bar) bar.style.display = show ? "" : "none";
       if (notifBtn && !pushSupported) { notifBtn.textContent = "No disponible"; notifBtn.disabled = true; }
     }
+    function swReady() {
+      // Registramos y esperamos el SW activo, con timeout para no colgar el botón.
+      var m = document.querySelector('link[rel="manifest"]');
+      var base = m ? m.href.replace(/manifest\.json.*$/, "") : "./";
+      var reg = navigator.serviceWorker.register(base + "sw.js", { scope: base })
+        .then(function () { return navigator.serviceWorker.ready; });
+      var to = new Promise(function (_, rej) { setTimeout(function () { rej(new Error("sw-timeout")); }, 12000); });
+      return Promise.race([reg, to]);
+    }
     function subscribePush(btn) {
       if (!pushSupported) return;
       if (!CFG.PUSH_PUBLIC_KEY) { if (btn) btn.textContent = "Pronto"; return; }
       if (btn) { btn.disabled = true; btn.textContent = "Activando…"; }
       Notification.requestPermission().then(function (perm) {
         if (perm !== "granted") { if (btn) { btn.disabled = false; btn.textContent = "Activar"; } updateNotifUI(); return; }
-        navigator.serviceWorker.ready.then(function (reg) {
-          return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(CFG.PUSH_PUBLIC_KEY) });
+        return swReady().then(function (reg) {
+          return reg.pushManager.getSubscription().then(function (existing) {
+            return existing || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(CFG.PUSH_PUBLIC_KEY) });
+          });
         }).then(function (sub) {
           var j = sub.toJSON();
-          if (sb) sb.from(CFG.PUSH_SUB_TABLE || "hopur_push_subscriptions").insert({
+          return sb ? sb.from(CFG.PUSH_SUB_TABLE || "hopur_push_subscriptions").upsert({
             endpoint: sub.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, user_agent: navigator.userAgent
-          });
-          updateNotifUI();
-        }).catch(function () { if (btn) { btn.disabled = false; btn.textContent = "Reintentar"; } });
+          }, { onConflict: "endpoint", ignoreDuplicates: true }) : null;
+        }).then(function () { updateNotifUI(); });
+      }).catch(function (err) {
+        if (btn) { btn.disabled = false; btn.textContent = "Reintentar"; }
+        try { console.error("[HOPUR] push error:", (err && (err.message || err)) || err); } catch (e) {}
       });
     }
     if (notifBtn) notifBtn.addEventListener("click", function () { subscribePush(notifBtn); });
@@ -256,6 +269,8 @@
     var aMsg = document.getElementById("accessMsg");
     var gUser = null;
     function aShow(t, k) { if (!aMsg) return; aMsg.textContent = t; aMsg.className = "access__msg is-show " + (k || "ok"); }
+    function hideAccess() { var a = document.getElementById("access"), t = document.getElementById("accessTitle"); if (a) a.style.display = "none"; if (t) t.style.display = "none"; }
+    try { if (localStorage.getItem("hopur_confirmed") === "1") hideAccess(); } catch (e) {}
     function applyAccessSession(s) {
       var alt = document.getElementById("accessAlt"), sub = document.getElementById("accessSub");
       if (s && s.user) {
@@ -303,13 +318,10 @@
           user_agent: navigator.userAgent
         }).then(function (r) {
           if (btn) { btn.disabled = false; btn.textContent = "Confirmar mi teléfono"; }
-          if (r && r.error) {
-            if (r.error.code === "23505") { aShow("Ya estabas registrado. ¡Te esperamos!", "ok"); }
-            else { aShow("No se pudo guardar. Intenta de nuevo.", "err"); }
-            return;
-          }
-          aShow("¡Listo! Tu asistencia quedó confirmada.", "ok");
-          aForm.style.display = "none";
+          if (r && r.error && r.error.code !== "23505") { aShow("No se pudo guardar. Intenta de nuevo.", "err"); return; }
+          aShow((r && r.error) ? "Ya estabas confirmado. ¡Te esperamos!" : "¡Listo! Tu asistencia quedó confirmada.", "ok");
+          try { localStorage.setItem("hopur_confirmed", "1"); } catch (e) {}
+          setTimeout(hideAccess, 1000);
         }).catch(function () {
           if (btn) { btn.disabled = false; btn.textContent = "Confirmar mi teléfono"; }
           aShow("Sin conexión. Intenta de nuevo.", "err");

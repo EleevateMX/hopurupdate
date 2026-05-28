@@ -157,6 +157,7 @@
 .panel-grid{display:grid;gap:12px}
 .panelist{display:flex;gap:14px;align-items:center;background:var(--glass);border:1px solid var(--glass-brd);border-radius:18px;box-shadow:var(--shadow);padding:14px 16px;position:relative;overflow:hidden}
 .panelist__av{flex:0 0 56px;width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-weight:900;font-size:19px;color:#fff;background:linear-gradient(135deg,var(--c1),var(--c1-deep));box-shadow:0 8px 18px rgba(31,159,161,.3)}
+.panelist__av img{width:100%;height:100%;object-fit:cover;object-position:top center;border-radius:inherit}
 .panelist__b strong{display:block;font-size:15.5px;color:var(--c2);font-weight:800;line-height:1.15}
 .panelist__b span{display:block;font-size:12.8px;color:var(--muted);line-height:1.5;margin-top:3px}
 .panelist__tag{display:inline-block;margin-top:6px;background:rgba(67,199,201,.1);color:var(--c1-deep);font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:4px 9px;border-radius:999px}
