@@ -150,8 +150,9 @@ create policy hopur_push_admin_select on public.hopur_push_subscriptions
   for select to authenticated
   using (exists (select 1 from public.hopur_admins a where lower(a.email) = lower(auth.jwt() ->> 'email')));
 
--- 👉 IMPORTANTE: date de alta como admin (cambia el correo por el tuyo de Google):
---    insert into public.hopur_admins (email) values ('tucorreo@gmail.com');
+-- 👉 IMPORTANTE: date de alta como admin (agrega aquí los correos de Google):
+insert into public.hopur_admins (email) values ('edronemidmx@gmail.com') on conflict (email) do nothing;
+--    insert into public.hopur_admins (email) values ('otrocorreo@gmail.com') on conflict (email) do nothing;
 
 
 -- ============================================================
