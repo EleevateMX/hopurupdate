@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>HOPUR · Panel Yucatalent</title>
+  <meta name="description" content="Panel de la app HOPUR: programa del jueves, panelistas e información del Foro Iberoamericano de Empleabilidad Yucatalent.">
+  <meta name="theme-color" content="#43c7c9">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body style="background:#e9eeee">
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4Z"/><path d="M13 5v14"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.7 2.7 2.7 15.3 0 18M12 3c-2.7 2.7-2.7 15.3 0 18"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.4c.6.6 1 1.3 1 2.1h6c0-.8.4-1.5 1-2.1A6 6 0 0 0 12 3Z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 19V5a2 2 0 0 1 2-2h12v14H7a2 2 0 0 0-2 2Z"/><path d="M7 17h12"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M3 21h18"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M5 21h14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9.3-8.6A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 9.3 5.4C19 15.6 12 20 12 20Z"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+    <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M4 8h13v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4Z"/><path d="M17 9h2a2 2 0 0 1 0 4h-2"/><path d="M7 2v2M10 2v2M13 2v2"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h12l-2 4 2 4H5"/></symbol>
+    <symbol id="i-whats" viewBox="0 0 24 24"><path d="M3 21l1.6-4.5A8.5 8.5 0 1 1 8 19.5L3 21Z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5.6 0 1.2-.4 1.2-1l-.2-1.2-2 .6-1.4-1.9.6-1.9-1.2-.2c-.6 0-1 .6-1 1.2Z" fill="currentColor" stroke="none"/></symbol>
+  </defs></svg>
+
+  <div class="app" id="app">
+
+    <header class="app-bar">
+      <a class="app-bar__brand" href="/"><img src="https://i.imgur.com/QNAIET0.png" alt="HOPUR"></a>
+      <span class="app-bar__live" id="appLive" data-state="soon"><span class="dot"></span> <span id="appLiveText">Próximamente</span></span>
+    </header>
+
+    <main class="app-main">
+
+      <!-- ============ INICIO ============ -->
+      <section class="app-view is-active" data-view="inicio">
+        <div class="app-hero">
+          <div class="app-hero__eyebrow">I Foro Iberoamericano de Empleabilidad</div>
+          <h1>Yucatalent</h1>
+          <p>Del diálogo a la acción: empleabilidad juvenil, talento y cooperación desde Mérida, Yucatán.</p>
+          <div class="app-hero__meta">
+            <span><svg class="ic"><use href="#i-calendar"/></svg> 27 y 28 de mayo</span>
+            <span><svg class="ic"><use href="#i-pin"/></svg> Centro Int. de Congresos</span>
+            <span><svg class="ic"><use href="#i-ticket"/></svg> Acceso gratuito</span>
+          </div>
+          <div class="app-count" id="appCount">
+            <div><strong id="ac-days">00</strong><span>Días</span></div>
+            <div><strong id="ac-hours">00</strong><span>Hrs</span></div>
+            <div><strong id="ac-mins">00</strong><span>Min</span></div>
+            <div><strong id="ac-secs">00</strong><span>Seg</span></div>
+          </div>
+        </div>
+
+        <div class="app-section-title">Accesos rápidos</div>
+        <div class="qlinks">
+          <button class="qlink" data-goto="programa"><span class="qlink__ic"><svg class="ic"><use href="#i-calendar"/></svg></span><span><b>Programa</b><small>Agenda del jueves</small></span></button>
+          <button class="qlink" data-goto="panelistas"><span class="qlink__ic"><svg class="ic"><use href="#i-users"/></svg></span><span><b>Panelistas</b><small>Quiénes participan</small></span></button>
+          <button class="qlink" data-goto="hopur"><span class="qlink__ic"><svg class="ic"><use href="#i-info"/></svg></span><span><b>Sobre HOPUR</b><small>Quiénes somos</small></span></button>
+          <a class="qlink" href="/#registro"><span class="qlink__ic"><svg class="ic"><use href="#i-ticket"/></svg></span><span><b>Registrarme</b><small>Aparta tu lugar</small></span></a>
+        </div>
+
+        <div class="app-section-title">Ejes del foro</div>
+        <div class="axis-grid">
+          <article class="axis"><div class="axis__ic"><svg class="ic"><use href="#i-users"/></svg></div><h4>Empleabilidad juvenil</h4><p>El empleo y el talento joven en el centro del diálogo.</p></article>
+          <article class="axis"><div class="axis__ic"><svg class="ic"><use href="#i-link"/></svg></div><h4>Público-privada</h4><p>Empresas, gobierno, academia y organizaciones articuladas.</p></article>
+          <article class="axis"><div class="axis__ic"><svg class="ic"><use href="#i-globe"/></svg></div><h4>Iberoamericano</h4><p>Cooperación regional e intercambio de experiencias.</p></article>
+          <article class="axis"><div class="axis__ic"><svg class="ic"><use href="#i-trend"/></svg></div><h4>Capital humano</h4><p>Mérida y Yucatán como ecosistema de empleo y talento.</p></article>
+        </div>
+      </section>
+
+      <!-- ============ PROGRAMA ============ -->
+      <section class="app-view" data-view="programa">
+        <div class="app-section-title" style="margin-top:6px">Programa · Jueves 28 de mayo</div>
+        <div class="prog-note"><strong>Agenda preliminar.</strong> Horarios y sesiones de referencia, sujetos a confirmación por la organización. Cuando me pases el programa oficial, lo dejo exacto.</div>
+        <div class="timeline">
+          <div class="tl"><div class="tl__time"><svg class="ic"><use href="#i-clock"/></svg> 08:30</div><div class="tl__card"><h4>Registro y acreditación</h4><p>Bienvenida y entrega de gafetes en el Centro Internacional de Congresos.</p><span class="tl__tag">Registro</span></div></div>
+          <div class="tl"><div class="tl__time"><svg class="ic"><use href="#i-clock"/></svg> 09:00</div><div class="tl__card"><h4>Inauguración oficial</h4><p>Autoridades de la Secretaría de Economía y Trabajo, Canaco Servytur Mérida, HOPUR y Conecta Iberoamérica.</p><span class="tl__tag">Apertura</span></div></div>
+          <div class="tl"><div class="tl__time"><svg class="ic"><use href="#i-clock"/></svg> 09:45</div><div class="tl__card"><h4>Conferencia magistral</h4><p>Empleabilidad juvenil en Iberoamérica: retos y oportunidades.</p><span class="tl__tag">Conferencia</span></div></div>
+          <div class="tl"><div class="tl__time"><svg class="ic"><use href="#i-clock"/></svg> 10:45</div><div class="tl__card"><h4>Panel: Articulación público-privada</h4><p>Cómo conectar empresas, gobierno y academia para el empleo joven.</p><span class="tl__tag">Panel</span></div></div>
+          <div class="tl tl--break"><div class="tl__time"><svg class="ic"><use href="#i-coffee"/></svg> 11:45</div><div class="tl__card"><h4>Receso y networking</h4><p>Espacio para vinculación entre asistentes y panelistas.</p></div></div>
+          <div class="tl"><div class="tl__time"><svg class="ic"><use href="#i-clock"/></svg> 12:15</div><div class="tl__card"><h4>Panel: IA e innovación tecnológica</h4><p>Adaptación tecnológica y nuevas competencias laborales.</p><span class="tl__tag">Panel</span></div></div>
+          <div class="tl"><div class="tl__time"><svg class="ic"><use href="#i-clock"/></svg> 13:15</div><div class="tl__card"><h4>Panel: Talento para el sector turismo</h4><p>Desarrollo de capital humano para el turismo en la región.</p><span class="tl__tag">Panel</span></div></div>
+          <div class="tl tl--break"><div class="tl__time"><svg class="ic"><use href="#i-coffee"/></svg> 14:00</div><div class="tl__card"><h4>Comida</h4><p>Receso para alimentos.</p></div></div>
+          <div class="tl"><div class="tl__time"><svg class="ic"><use href="#i-clock"/></svg> 15:30</div><div class="tl__card"><h4>Conversatorio: Salud mental y bienestar</h4><p>Bienestar socioemocional en el entorno laboral.</p><span class="tl__tag">Conversatorio</span></div></div>
+          <div class="tl"><div class="tl__time"><svg class="ic"><use href="#i-clock"/></svg> 16:30</div><div class="tl__card"><h4>Sesión estratégica: del diálogo a la acción</h4><p>Construcción de compromisos y alianzas concretas.</p><span class="tl__tag">Sesión</span></div></div>
+          <div class="tl"><div class="tl__time"><svg class="ic"><use href="#i-flag"/></svg> 17:30</div><div class="tl__card"><h4>Clausura y conclusiones</h4><p>Cierre del foro y próximos pasos.</p><span class="tl__tag">Clausura</span></div></div>
+        </div>
+      </section>
+
+      <!-- ============ PANELISTAS ============ -->
+      <section class="app-view" data-view="panelistas">
+        <div class="app-section-title" style="margin-top:6px">Panelistas y ponentes</div>
+        <div class="prog-note"><strong>Listado de referencia.</strong> Nombres confirmados públicamente; los cargos y la foto se ajustan cuando me los compartas.</div>
+        <div class="panel-grid">
+          <article class="panelist"><div class="panelist__av">ME</div><div class="panelist__b"><strong>Dra. María Esther Pérez López</strong><span>Directora de HOPUR · anfitriona del foro</span><span class="panelist__tag">Organiza</span></div></article>
+          <article class="panelist"><div class="panelist__av">YA</div><div class="panelist__b"><strong>Yohania de Armas</strong><span>Gestión del talento y capital humano</span><span class="panelist__tag">Talento</span></div></article>
+          <article class="panelist"><div class="panelist__av">TC</div><div class="panelist__b"><strong>Tito Crissien</strong><span>Innovación y educación · fundador de IDITEK University</span><span class="panelist__tag">Innovación</span></div></article>
+          <article class="panelist"><div class="panelist__av">MM</div><div class="panelist__b"><strong>Mirna Alejandra Manzanilla Romero</strong><span>Vinculación y desarrollo del talento</span><span class="panelist__tag">Vinculación</span></div></article>
+          <article class="panelist"><div class="panelist__av">DF</div><div class="panelist__b"><strong>Darío Flota Ocampo</strong><span>Turismo y desarrollo de destino</span><span class="panelist__tag">Turismo</span></div></article>
+          <article class="panelist"><div class="panelist__av">JB</div><div class="panelist__b"><strong>Jorge Ermilo Barrera Novelo</strong><span>Sector empresarial y empleo</span><span class="panelist__tag">Empresa</span></div></article>
+        </div>
+      </section>
+
+      <!-- ============ HOPUR ============ -->
+      <section class="app-view" data-view="hopur">
+        <div class="app-section-title" style="margin-top:6px">Sobre HOPUR</div>
+        <div class="app-card" style="margin-bottom:14px">
+          <div class="exec">
+            <img src="https://i.imgur.com/V3UjaI1.jpeg" alt="Dra. María Esther Pérez López">
+            <div><strong>Dra. María Esther Pérez López</strong><span>Socia Directora · Doctora en Derecho con trayectoria en administración pública, litigio y consultoría estratégica.</span></div>
+          </div>
+          <p style="margin:0;font-size:14px;line-height:1.7;color:var(--muted)">
+            HOPUR es una firma de consultoría y asesoría especializada que integra experiencia jurídica,
+            estratégica e institucional para acompañar a organizaciones públicas, privadas y sociales con
+            una visión moderna, profesional y orientada a resultados.
+          </p>
+        </div>
+
+        <div class="app-section-title">Pilares que nos definen</div>
+        <div class="vals-grid">
+          <article class="val"><div class="val__ic"><svg class="ic"><use href="#i-spark"/></svg></div><h4>Innovación</h4><p>Soluciones nuevas, funcionales y estratégicas para contextos complejos.</p></article>
+          <article class="val"><div class="val__ic"><svg class="ic"><use href="#i-globe"/></svg></div><h4>Responsabilidad global</h4><p>Cada intervención con perspectiva institucional y sentido de impacto.</p></article>
+          <article class="val"><div class="val__ic"><svg class="ic"><use href="#i-book"/></svg></div><h4>Aprendizaje continuo</h4><p>Actualización permanente para una consultoría vigente y sólida.</p></article>
+          <article class="val"><div class="val__ic"><svg class="ic"><use href="#i-link"/></svg></div><h4>Colaboración</h4><p>Trabajo articulado y construcción conjunta de resultados.</p></article>
+          <article class="val"><div class="val__ic"><svg class="ic"><use href="#i-target"/></svg></div><h4>Compromiso con el cliente</h4><p>Atención personalizada y visión de resultado en cada proceso.</p></article>
+          <article class="val"><div class="val__ic"><svg class="ic"><use href="#i-building"/></svg></div><h4>Impacto social</h4><p>Fortalecer organizaciones y aportar valor más allá de lo inmediato.</p></article>
+        </div>
+
+        <div class="app-cta">
+          <a class="btn btn--primary btn--block" href="/#registro"><svg class="ic ic--sm"><use href="#i-ticket"/></svg> Registrarme al foro</a>
+          <a class="btn btn--secondary btn--block" href="https://wa.me/529992507203" target="_blank" rel="noopener"><svg class="ic ic--sm"><use href="#i-whats"/></svg> Escribir por WhatsApp</a>
+          <a class="btn btn--ghost" href="/" style="justify-content:center"><svg class="ic ic--sm"><use href="#i-back"/></svg> Volver al sitio</a>
+        </div>
+      </section>
+
+    </main>
+
+    <nav class="app-tabbar" id="appTabbar">
+      <button class="app-tab is-active" data-tab="inicio"><svg class="ic"><use href="#i-home"/></svg><span>Inicio</span></button>
+      <button class="app-tab" data-tab="programa"><svg class="ic"><use href="#i-calendar"/></svg><span>Programa</span></button>
+      <button class="app-tab" data-tab="panelistas"><svg class="ic"><use href="#i-users"/></svg><span>Panelistas</span></button>
+      <button class="app-tab" data-tab="hopur"><svg class="ic"><use href="#i-info"/></svg><span>HOPUR</span></button>
+    </nav>
+  </div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

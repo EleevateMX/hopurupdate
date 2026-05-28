@@ -1,6 +1,6 @@
 -- ============================================================
 -- HOPUR / YUCATALENT — Esquema de registro de contactos
--- Proyecto Supabase: rwvnulxlygdjxvovxind
+-- Proyecto Supabase: urtduigdlkwbopczlbhr
 --
 -- IMPORTANTE: todas las tablas usan el prefijo "hopur_" para NO
 -- interferir con ningún otro proyecto que viva en el mismo Supabase

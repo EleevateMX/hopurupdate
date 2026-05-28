@@ -187,7 +187,7 @@
           else { show("Ocurrió un error al guardar. Inténtalo de nuevo o escríbenos por WhatsApp.", "err"); }
           return;
         }
-        show("¡Registro confirmado! Te enviaremos el programa y los detalles del foro. 🎉", "ok");
+        show("¡Registro confirmado! Te enviaremos el programa y los detalles del foro.", "ok");
         form.reset();
       }).catch(function () {
         submitBtn.disabled = false;

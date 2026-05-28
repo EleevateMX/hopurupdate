@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>App HOPUR · Instala Yucatalent en tu dispositivo</title>
+  <meta name="description" content="Instala la app de HOPUR y lleva Yucatalent contigo: programa del jueves, panelistas e información del foro, incluso sin conexión.">
+  <meta name="theme-color" content="#43c7c9">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></symbol>
+    <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4Z"/><path d="M13 5v14"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M5 21h14"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/></symbol>
+    <symbol id="i-plus-square" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></symbol>
+    <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.6" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  </defs></svg>
+
+  <div class="appland">
+    <header class="appland__nav">
+      <div class="nav__inner">
+        <a class="appland__back" href="/"><svg class="ic ic--sm"><use href="#i-back"/></svg> Volver al sitio</a>
+        <a class="btn btn--primary" href="/app/dashboard/" style="min-height:44px;padding:0 18px;font-size:14px">Abrir panel</a>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="apphero">
+      <div class="deco deco--ring" style="width:420px;height:420px;right:-200px;top:-60px"></div>
+      <div class="deco deco--square" style="width:16px;height:16px;top:18%;left:6%"></div>
+      <div class="deco deco--triangle" style="left:4%;bottom:14%"></div>
+      <div class="container apphero__wrap">
+        <div>
+          <span class="eyebrow">App HOPUR · Yucatalent</span>
+          <h1 class="apphero__title">Lleva el foro <span>en tu bolsillo</span></h1>
+          <p class="apphero__text">
+            Instala la app de HOPUR y ten siempre a mano el <strong>programa del jueves</strong>,
+            los <strong>panelistas</strong> y toda la información de Yucatalent — incluso sin conexión.
+            Se instala como una app real, sin tiendas ni descargas pesadas.
+          </p>
+          <div class="apphero__actions">
+            <button class="btn btn--primary" id="installBtn"><svg class="ic ic--sm"><use href="#i-download"/></svg> Instalar app</button>
+            <a class="btn btn--secondary" href="/app/dashboard/">Abrir el panel</a>
+          </div>
+          <p class="apphero__note" id="installNote">Compatible con iPhone, Android y computadora. Elige tu dispositivo más abajo.</p>
+        </div>
+
+        <div class="apphero__stage">
+          <div class="phone" aria-hidden="true">
+            <div class="phone__screen">
+              <div class="phone__top">
+                <div class="phone__brand">HOPUR · YUCATALENT</div>
+                <div class="phone__h">Foro Iberoamericano de Empleabilidad</div>
+                <div class="phone__live"><span class="dot"></span> En vivo hoy</div>
+              </div>
+              <div class="phone__body">
+                <div class="phone__row"><svg class="ic"><use href="#i-calendar"/></svg><div><b>Programa del jueves</b><small>10 bloques · 08:30–17:30</small></div></div>
+                <div class="phone__row"><svg class="ic"><use href="#i-users"/></svg><div><b>Panelistas</b><small>Expertos de Iberoamérica</small></div></div>
+                <div class="phone__row"><svg class="ic"><use href="#i-info"/></svg><div><b>Sobre HOPUR</b><small>Quiénes somos y valores</small></div></div>
+                <div class="phone__row"><svg class="ic"><use href="#i-ticket"/></svg><div><b>Acceso gratuito</b><small>Centro Int. de Congresos</small></div></div>
+              </div>
+              <div class="phone__tabbar">
+                <svg class="ic on"><use href="#i-home"/></svg>
+                <svg class="ic"><use href="#i-calendar"/></svg>
+                <svg class="ic"><use href="#i-users"/></svg>
+                <svg class="ic"><use href="#i-info"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUÉ INCLUYE -->
+    <section class="appfeatures">
+      <div class="container">
+        <span class="eyebrow">Qué incluye</span>
+        <h2 class="section-title" style="font-size:clamp(24px,3.4vw,40px)">Todo el evento, <span>en una sola app</span></h2>
+        <div class="appfeatures__grid">
+          <article class="appfeature"><div class="appfeature__ic"><svg class="ic"><use href="#i-calendar"/></svg></div><h3>Programa del jueves</h3><p>Agenda completa con horarios, bloques y sesiones del foro.</p></article>
+          <article class="appfeature"><div class="appfeature__ic"><svg class="ic"><use href="#i-users"/></svg></div><h3>Panelistas</h3><p>Conoce a las y los especialistas que participan en Yucatalent.</p></article>
+          <article class="appfeature"><div class="appfeature__ic"><svg class="ic"><use href="#i-info"/></svg></div><h3>Sobre HOPUR</h3><p>Quiénes somos, nuestra esencia, valores y compromisos.</p></article>
+          <article class="appfeature"><div class="appfeature__ic"><svg class="ic"><use href="#i-bolt"/></svg></div><h3>Funciona offline</h3><p>Una vez instalada, abre sin internet y carga al instante.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTRUCCIONES -->
+    <section class="appinstall">
+      <div class="container">
+        <span class="eyebrow">Cómo instalarla</span>
+        <h2 class="section-title" style="font-size:clamp(24px,3.4vw,40px)">Instálala en <span>30 segundos</span></h2>
+
+        <div class="appinstall__tabs" role="tablist">
+          <button class="appinstall__tab" data-tab="ios" role="tab"><svg class="ic ic--sm"><use href="#i-phone"/></svg> iPhone / iPad</button>
+          <button class="appinstall__tab" data-tab="android" role="tab"><svg class="ic ic--sm"><use href="#i-phone"/></svg> Android</button>
+          <button class="appinstall__tab" data-tab="desktop" role="tab"><svg class="ic ic--sm"><use href="#i-monitor"/></svg> Computadora</button>
+        </div>
+
+        <div class="appinstall__panel" data-panel="ios">
+          <div class="steps">
+            <div class="step"><div class="step__n">1</div><div><span class="step__b">Abre esta página en Safari</span><p>En iPhone/iPad la instalación solo funciona desde el navegador Safari.</p></div></div>
+            <div class="step"><div class="step__n">2</div><div><span class="step__b">Toca Compartir <svg class="ic"><use href="#i-share"/></svg></span><p>Es el ícono del cuadro con la flecha hacia arriba, en la barra inferior.</p></div></div>
+            <div class="step"><div class="step__n">3</div><div><span class="step__b">Elige "Añadir a pantalla de inicio" <svg class="ic"><use href="#i-plus-square"/></svg></span><p>Desliza el menú si no lo ves de inmediato.</p></div></div>
+            <div class="step"><div class="step__n">4</div><div><span class="step__b">Toca "Añadir"</span><p>El ícono de HOPUR aparecerá en tu pantalla como cualquier app.</p></div></div>
+          </div>
+        </div>
+
+        <div class="appinstall__panel" data-panel="android">
+          <div class="steps">
+            <div class="step"><div class="step__n">1</div><div><span class="step__b">Abre esta página en Chrome</span><p>O usa el botón "Instalar app" de arriba si te aparece.</p></div></div>
+            <div class="step"><div class="step__n">2</div><div><span class="step__b">Abre el menú <svg class="ic"><use href="#i-dots"/></svg></span><p>Los tres puntos en la esquina superior derecha.</p></div></div>
+            <div class="step"><div class="step__n">3</div><div><span class="step__b">Elige "Instalar app" <svg class="ic"><use href="#i-download"/></svg></span><p>En algunos teléfonos aparece como "Añadir a pantalla principal".</p></div></div>
+            <div class="step"><div class="step__n">4</div><div><span class="step__b">Confirma "Instalar"</span><p>La app de HOPUR quedará en tu cajón de aplicaciones.</p></div></div>
+          </div>
+        </div>
+
+        <div class="appinstall__panel" data-panel="desktop">
+          <div class="steps">
+            <div class="step"><div class="step__n">1</div><div><span class="step__b">Abre esta página en Chrome o Edge</span><p>También puedes usar el botón "Instalar app" de arriba.</p></div></div>
+            <div class="step"><div class="step__n">2</div><div><span class="step__b">Haz clic en el ícono Instalar <svg class="ic"><use href="#i-monitor"/></svg></span><p>Aparece al final de la barra de direcciones (un monitor con una flecha).</p></div></div>
+            <div class="step"><div class="step__n">3</div><div><span class="step__b">Confirma "Instalar"</span><p>Se abrirá en su propia ventana, como una aplicación de escritorio.</p></div></div>
+          </div>
+        </div>
+
+        <div style="margin-top:30px">
+          <a class="btn btn--primary" href="/app/dashboard/">Abrir el panel del evento</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__bottom" style="border:0;margin:0;padding:0">
+          <span>© <span id="year"></span> HOPUR · Yucatalent</span>
+          <span><a href="/">hopur.mx</a> · Mérida, Yucatán</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

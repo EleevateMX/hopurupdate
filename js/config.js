@@ -4,8 +4,8 @@
 // exponerla en el navegador. NUNCA pongas aquí la service_role key.
 // ============================================================
 window.HOPUR_CONFIG = {
-  SUPABASE_URL: "https://rwvnulxlygdjxvovxind.supabase.co",
-  SUPABASE_KEY: "sb_publishable_ytmFRe5AcyNey2Q9h6-7bw_ap-tYaKh",
+  SUPABASE_URL: "https://urtduigdlkwbopczlbhr.supabase.co",
+  SUPABASE_KEY: "sb_publishable_B8-1JSl7ix4X0j1xz1EduA_DqWMXhvV",
 
   // Tabla de registro (prefijo hopur_ para no chocar con otros proyectos).
   CONTACT_TABLE: "hopur_contacts",

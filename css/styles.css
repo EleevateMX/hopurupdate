@@ -172,6 +172,8 @@ button{font-family:inherit}
 .event__content::before{content:"";position:absolute;right:-42px;top:-42px;width:140px;height:140px;border-radius:50%;border:16px solid rgba(67,199,201,.08)}
 .event__meta{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 4px;position:relative;z-index:2}
 .event__chip{display:inline-flex;align-items:center;gap:7px;background:rgba(67,199,201,.1);color:var(--c1-deep);padding:8px 13px;border-radius:999px;font-size:12px;font-weight:800}
+.event__chip svg{width:15px;height:15px;flex:0 0 auto}
+.registro__benefits .ic svg{width:15px;height:15px}
 .countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0;position:relative;z-index:2}
 .countdown__cell{background:rgba(67,199,201,.08);border-radius:18px;padding:18px 12px;text-align:center;position:relative;overflow:hidden}
 .countdown__cell::before{content:"";position:absolute;inset:8px;border:1.5px dashed rgba(67,199,201,.22);border-radius:14px;animation:spin 18s linear infinite}
