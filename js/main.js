@@ -78,7 +78,7 @@
         if (label) label.textContent = "ya ocurrió";
         return;
       }
-      // Antes del evento → cuenta regresiva
+      // Antes del evento: cuenta regresiva
       set("cd-days", Math.floor(diff / 86400000));
       set("cd-hours", Math.floor(diff / 3600000) % 24);
       set("cd-mins", Math.floor(diff / 60000) % 60);

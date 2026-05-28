@@ -1,8 +1,12 @@
 // Service worker HOPUR — cache ligero "app shell" + offline básico.
-const CACHE = "hopur-v2";
+const CACHE = "hopur-v3";
 const ASSETS = [
   "/",
   "/index.html",
+  "/nosotros/",
+  "/servicios/",
+  "/eventos/",
+  "/contacto/",
   "/app/",
   "/app/index.html",
   "/app/dashboard/",
