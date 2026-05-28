@@ -33,8 +33,15 @@
   }
   function setMsg(t, k) { var m = $("cwMsg"); if (!m) return; m.textContent = t; m.className = "form-msg is-show " + (k || "ok"); }
 
-  var me = null, pendingImg = null;
+  var me = null, meIsAdmin = false, pendingImg = null;
   if (!sb) { return; }
+
+  function renderAdminBadge() {
+    if (!meIsAdmin || !me) return;
+    var n = $("cwMeName");
+    if (n && !n.querySelector(".cw-badge")) n.innerHTML = esc(me.name || "Asistente") + ' <span class="cw-badge">Admin</span>';
+  }
+  function canDelete(authorId) { return !!(me && (me.id === authorId || meIsAdmin)); }
 
   function renderMe() {
     if (!me) { $("cwAuth").style.display = ""; $("cwApp").style.display = "none"; return; }
@@ -58,7 +65,11 @@
         me = { id: u.id, name: (m.full_name || m.name || u.email), email: u.email, avatar: (m.avatar_url || m.picture || "") };
       } else me = null;
       renderMe();
-      if (me) loadFeed();
+      if (me) {
+        sb.from("hopur_admins").select("email").then(function (a) {
+          meIsAdmin = !!(a.data && a.data.length); renderAdminBadge(); loadFeed();
+        }).catch(function () { loadFeed(); });
+      } else { meIsAdmin = false; }
     });
   }
   sb.auth.onAuthStateChange(function () { loadSession(); });
@@ -148,7 +159,9 @@
   function postHtml(p, rx, ccount) {
     return '<article class="app-card cw-post" data-id="' + esc(p.id) + '">'
       + '<div class="post__top">' + avatar(p.author_name, p.author_avatar, "post__av")
-      + '<span class="post__who"><strong>' + esc(p.author_name || "Asistente") + '</strong><span>' + esc(timeAgo(p.created_at)) + '</span></span></div>'
+      + '<span class="post__who"><strong>' + esc(p.author_name || "Asistente") + '</strong><span>' + esc(timeAgo(p.created_at)) + '</span></span>'
+      + (canDelete(p.author_id) ? '<button class="cw-del" data-del-post="' + esc(p.id) + '" title="Eliminar"><svg class="ic"><use href="#i-trash"/></svg></button>' : '')
+      + '</div>'
       + (p.body ? '<p class="cw-post__body">' + esc(p.body) + '</p>' : '')
       + (p.image_url ? '<img class="cw-post__img" src="' + esc(p.image_url) + '" alt="" loading="lazy">' : '')
       + '<div class="cw-actions">'
@@ -166,6 +179,11 @@
           if (act === "cmt") toggleComments(el, id);
           else react(id, act);
         });
+      });
+      var del = el.querySelector("[data-del-post]");
+      if (del) del.addEventListener("click", function () {
+        if (!confirm("¿Eliminar esta publicación?")) return;
+        sb.from("hopur_wall_posts").delete().eq("id", id).then(function () { loadFeed(); });
       });
     });
   }
@@ -205,7 +223,9 @@
       var list = r.data || [];
       var html = list.map(function (c) {
         return '<div class="cw-comment">' + avatar(c.author_name, c.author_avatar, "cw-av")
-          + '<div class="bx"><strong>' + esc(c.author_name || "Asistente") + '</strong><span>' + esc(c.body) + '</span></div></div>';
+          + '<div class="bx"><strong>' + esc(c.author_name || "Asistente") + '</strong><span>' + esc(c.body) + '</span></div>'
+          + (canDelete(c.author_id) ? '<button class="cw-del--c" data-del-comment="' + esc(c.id) + '" title="Eliminar">×</button>' : '')
+          + '</div>';
       }).join("");
       html += '<div class="cw-cbox"><input type="text" placeholder="Escribe un comentario…" data-cinput><button data-csend><svg class="ic"><use href="#i-send"/></svg></button></div>';
       box.innerHTML = html;
@@ -225,6 +245,16 @@
       }
       send.addEventListener("click", submit);
       input.addEventListener("keydown", function (e) { if (e.key === "Enter") submit(); });
+      box.querySelectorAll("[data-del-comment]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          if (!confirm("¿Eliminar comentario?")) return;
+          sb.from("hopur_wall_comments").delete().eq("id", b.getAttribute("data-del-comment")).then(function () {
+            var post = box.closest(".cw-post");
+            if (post) { var cs = post.querySelector('[data-act="cmt"] span'); if (cs) cs.textContent = Math.max(0, parseInt(cs.textContent || "0", 10) - 1); }
+            loadComments(box, postId);
+          });
+        });
+      });
     });
   }
 })();

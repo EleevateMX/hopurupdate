@@ -15,6 +15,9 @@ window.HOPUR_CONFIG = {
   // Clave pública VAPID para notificaciones push (es pública, va en el cliente).
   PUSH_PUBLIC_KEY: "BLIcK2qqPcuVL1inJ5zaCpMnaRMqrWVeO0BNgbn1XAM16_tH-Z7xc9bPyo0T5RR31YE0BmAvSdewhxQI6Ki38p4",
 
+  // Slug de la Edge Function que envía push (el que aparece en su URL).
+  NOTIFY_FN: "swift-handler",
+
   // Fechas del foro Yucatalent (zona horaria de Yucatán, UTC-6).
   EVENT_START: "2026-05-27T09:00:00-06:00",
   EVENT_END: "2026-05-28T19:00:00-06:00",

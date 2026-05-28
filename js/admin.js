@@ -47,7 +47,7 @@
   function sendPush(title, body, url) {
     return sb.auth.getSession().then(function (res) {
       var token = res && res.data && res.data.session && res.data.session.access_token;
-      return fetch(CFG.SUPABASE_URL + "/functions/v1/notify", {
+      return fetch(CFG.SUPABASE_URL + "/functions/v1/" + (CFG.NOTIFY_FN || "notify"), {
         method: "POST",
         headers: { "Content-Type": "application/json", "apikey": CFG.SUPABASE_KEY, "Authorization": "Bearer " + token },
         body: JSON.stringify({ title: title, body: body, url: url || "app/dashboard/#noticias" })

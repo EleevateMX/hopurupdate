@@ -299,6 +299,11 @@
 .cw-cbox button{flex:0 0 auto;background:var(--c1);color:#fff;border:0;border-radius:50%;width:40px;height:40px;display:grid;place-items:center;cursor:pointer}
 .cw-cbox button .ic{width:18px;height:18px}
 .cw-empty{text-align:center;color:var(--muted);font-size:14px;padding:24px 10px}
+.cw-badge{display:inline-block;background:var(--c1);color:#fff;font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:999px;vertical-align:middle;margin-left:6px}
+.cw-del{margin-left:auto;flex:0 0 auto;background:none;border:0;color:#c0436a;cursor:pointer;padding:6px;border-radius:8px;display:grid;place-items:center}
+.cw-del .ic{width:17px;height:17px}
+.cw-del:hover{background:rgba(224,36,94,.08)}
+.cw-comment .cw-del--c{align-self:center;flex:0 0 auto;font-size:18px;line-height:1;color:#c0436a;border:0;background:none;cursor:pointer;padding:0 6px}
 
 /* Responsive */
 @media (max-width:900px){
