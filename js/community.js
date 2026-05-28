@@ -7,8 +7,10 @@
   if (!document.getElementById("cwApp")) return;
 
   var CFG = window.HOPUR_CONFIG || {};
-  var sb = (window.supabase && CFG.SUPABASE_URL && CFG.SUPABASE_KEY)
-    ? window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_KEY) : null;
+  // Cliente único compartido con app.js (misma sesión en toda la app).
+  var sb = window.HOPUR_SB ||
+    ((window.supabase && CFG.SUPABASE_URL && CFG.SUPABASE_KEY) ? window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_KEY) : null);
+  if (sb && !window.HOPUR_SB) window.HOPUR_SB = sb;
   var $ = function (id) { return document.getElementById(id); };
 
   function esc(s) {
@@ -40,6 +42,13 @@
     $("cwMeName").textContent = me.name || "Asistente";
     $("cwMeMail").textContent = me.email || "";
     $("cwMeAv").innerHTML = me.avatar ? '<img src="' + esc(me.avatar) + '" alt="">' : esc(initials(me.name || me.email));
+    try {
+      if (sessionStorage.getItem("cw_go") === "1") {
+        sessionStorage.removeItem("cw_go");
+        var tab = document.querySelector('.app-tab[data-tab="comunidad"]');
+        if (tab) tab.click();
+      }
+    } catch (e) {}
   }
   function loadSession() {
     sb.auth.getSession().then(function (res) {
@@ -56,7 +65,8 @@
   loadSession();
 
   $("cwGoogle").addEventListener("click", function () {
-    sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.href.split("#")[0] + "#comunidad" } });
+    try { sessionStorage.setItem("cw_go", "1"); } catch (e) {}
+    sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.href.split("#")[0] } });
   });
   $("cwLogout").addEventListener("click", function () { sb.auth.signOut().then(function () { me = null; renderMe(); }); });
 

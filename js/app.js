@@ -137,9 +137,9 @@
   /* ---------- Supabase: blog, notificaciones y acceso (Google) ---------- */
   (function appModules() {
     if (!document.getElementById("app")) return;
-    var sb = null;
-    if (window.supabase && CFG.SUPABASE_URL && CFG.SUPABASE_KEY) {
-      try { sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_KEY); } catch (e) { sb = null; }
+    var sb = window.HOPUR_SB || null;
+    if (!sb && window.supabase && CFG.SUPABASE_URL && CFG.SUPABASE_KEY) {
+      try { sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_KEY); window.HOPUR_SB = sb; } catch (e) { sb = null; }
     }
 
     function esc(s) {
