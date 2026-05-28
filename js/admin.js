@@ -31,6 +31,7 @@
 (function () {
   "use strict";
   var CFG = window.HOPUR_CONFIG || {};
+  document.addEventListener("gesturestart", function (e) { e.preventDefault(); }, { passive: false });
   var $ = function (id) { return document.getElementById(id); };
   var sb = null;
   if (window.supabase && CFG.SUPABASE_URL && CFG.SUPABASE_KEY) {
@@ -124,35 +125,68 @@
       });
   }
 
+  // ---- Imagen de la noticia (con vista de recorte) ----
+  var pPendingImg = null;
+  function adDownscale(file, maxW, cb) {
+    var img = new Image(), url = URL.createObjectURL(file);
+    img.onload = function () {
+      var sc = Math.min(1, maxW / (img.width || maxW));
+      var w = Math.max(1, Math.round(img.width * sc)), h = Math.max(1, Math.round(img.height * sc));
+      var c = document.createElement("canvas"); c.width = w; c.height = h;
+      c.getContext("2d").drawImage(img, 0, 0, w, h);
+      c.toBlob(function (b) { URL.revokeObjectURL(url); cb(b); }, "image/jpeg", 0.82);
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); cb(null); };
+    img.src = url;
+  }
+  if ($("pImg")) $("pImg").addEventListener("change", function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    adDownscale(f, 1280, function (b) {
+      if (!b) { msg($("pMsg"), "No se pudo procesar la imagen.", "err"); return; }
+      pPendingImg = b; $("pImgPrevImg").src = URL.createObjectURL(b); $("pImgPrev").style.display = "block";
+    });
+  });
+
   // ---- Publicar ----
   $("pSave").addEventListener("click", function () {
     var title = ($("pTitle").value || "").trim();
     if (!title) { msg($("pMsg"), "El título es obligatorio.", "err"); return; }
     var points = ($("pPoints").value || "").split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
     var summary = ($("pSummary").value || "").trim();
+    var body = $("pBody") ? ($("pBody").value || "").trim() : "";
     var btn = $("pSave"); btn.disabled = true; btn.textContent = "Publicando…";
-    sb.from(CFG.POSTS_TABLE || "hopur_posts").insert({
-      title: title,
-      panelist: ($("pPanelist").value || "").trim() || null,
-      role: ($("pRole").value || "").trim() || null,
-      summary: summary || null,
-      points: points,
-      published: true
-    }).then(function (r) {
-      btn.disabled = false; btn.textContent = "Publicar";
-      if (r && r.error) { msg($("pMsg"), "No se pudo publicar (¿tu correo está en hopur_admins?): " + r.error.message, "err"); return; }
-      var doPush = $("pPush").checked;
-      ["pTitle", "pPanelist", "pRole", "pSummary", "pPoints"].forEach(function (i) { $(i).value = ""; });
-      loadPosts();
-      if (doPush) {
-        msg($("pMsg"), "Publicado. Enviando notificación…", "ok");
-        sendPush(title, summary || "Nueva publicación en Yucatalent")
-          .then(function (res) { msg($("pMsg"), "Publicado y notificado (" + ((res && res.sent) || 0) + " envíos).", "ok"); })
-          .catch(function () { msg($("pMsg"), "Publicado. La notificación no se envió (¿falta desplegar la función 'notify'?).", "err"); });
-      } else {
-        msg($("pMsg"), "¡Publicado!", "ok");
-      }
-    }).catch(function () { btn.disabled = false; btn.textContent = "Publicar"; msg($("pMsg"), "Error de conexión.", "err"); });
+    function publish(imageUrl) {
+      sb.from(CFG.POSTS_TABLE || "hopur_posts").insert({
+        title: title,
+        panelist: ($("pPanelist").value || "").trim() || null,
+        role: ($("pRole").value || "").trim() || null,
+        summary: summary || null,
+        body: body || null,
+        points: points,
+        image_url: imageUrl || null,
+        published: true
+      }).then(function (r) {
+        btn.disabled = false; btn.textContent = "Publicar";
+        if (r && r.error) { msg($("pMsg"), "No se pudo publicar (¿tu correo está en hopur_admins?): " + r.error.message, "err"); return; }
+        var doPush = $("pPush").checked;
+        ["pTitle", "pPanelist", "pRole", "pSummary", "pPoints", "pBody"].forEach(function (i) { if ($(i)) $(i).value = ""; });
+        pPendingImg = null; if ($("pImg")) $("pImg").value = ""; if ($("pImgPrev")) $("pImgPrev").style.display = "none";
+        loadPosts();
+        if (doPush) {
+          msg($("pMsg"), "Publicado. Enviando notificación…", "ok");
+          sendPush(title, summary || "Nueva publicación en Yucatalent")
+            .then(function (res) { msg($("pMsg"), "Publicado y notificado (" + ((res && res.sent) || 0) + " envíos).", "ok"); })
+            .catch(function () { msg($("pMsg"), "Publicado. La notificación no se envió (¿falta desplegar la función?).", "err"); });
+        } else { msg($("pMsg"), "¡Publicado!", "ok"); }
+      }).catch(function () { btn.disabled = false; btn.textContent = "Publicar"; msg($("pMsg"), "Error de conexión.", "err"); });
+    }
+    if (pPendingImg) {
+      var path = "news/" + Date.now() + ".jpg";
+      sb.storage.from("wall").upload(path, pPendingImg, { contentType: "image/jpeg", upsert: false }).then(function (r) {
+        if (r && r.error) { btn.disabled = false; btn.textContent = "Publicar"; msg($("pMsg"), "No se pudo subir la imagen: " + r.error.message, "err"); return; }
+        publish(sb.storage.from("wall").getPublicUrl(path).data.publicUrl);
+      }).catch(function () { btn.disabled = false; btn.textContent = "Publicar"; msg($("pMsg"), "No se pudo subir la imagen.", "err"); });
+    } else { publish(null); }
   });
 
   // ---- Push suelto ----

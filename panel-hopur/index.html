@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>Panel HOPUR</title>
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#43c7c9">
@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <style>
-    body{background:#eef2f2}
+    body{background:#eef2f2;touch-action:pan-x pan-y}
     .wrap{max-width:760px;margin:0 auto;padding:22px 18px 60px}
     body.locked .wrap{display:none}
     .gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(135deg,#0f1414,#143b3c)}
@@ -115,6 +115,14 @@
         <textarea id="pSummary" placeholder="Una o dos frases con lo esencial…"></textarea>
         <label class="fl" for="pPoints">Puntos clave (uno por línea)</label>
         <textarea id="pPoints" placeholder="Idea 1&#10;Idea 2&#10;Idea 3"></textarea>
+        <label class="fl" for="pBody">Nota completa (opcional)</label>
+        <textarea id="pBody" placeholder="Texto completo de la nota… (se muestra al tocar 'Ver más')"></textarea>
+        <label class="fl" for="pImg">Imagen (opcional)</label>
+        <input type="file" id="pImg" accept="image/*">
+        <div id="pImgPrev" style="display:none;margin-top:10px">
+          <div style="width:100%;height:170px;border-radius:12px;overflow:hidden;background:#eef2f2"><img id="pImgPrevImg" style="width:100%;height:100%;object-fit:cover" alt=""></div>
+          <small style="display:block;color:var(--muted);font-size:12px;margin-top:6px">Así se recortará en la app.</small>
+        </div>
         <div class="chkrow"><input type="checkbox" id="pPush" checked><label for="pPush">Enviar notificación push al publicar</label></div>
         <button class="btn btn--primary btn--block" id="pSave">Publicar</button>
         <div class="msg" id="pMsg" role="status" aria-live="polite"></div>

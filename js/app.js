@@ -5,6 +5,9 @@
   "use strict";
   var CFG = window.HOPUR_CONFIG || {};
 
+  // Evitar zoom accidental (pellizco) en la app.
+  document.addEventListener("gesturestart", function (e) { e.preventDefault(); }, { passive: false });
+
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
@@ -170,15 +173,28 @@
       }
       feed.innerHTML = rows.map(function (p) {
         var pts = Array.isArray(p.points) ? p.points : [];
+        var isHopur = !p.panelist || /hopur/i.test(p.panelist);
+        var av = isHopur
+          ? '<span class="post__av post__av--logo"><img src="../../icons/hopur-mark.svg" alt="HOPUR"></span>'
+          : '<span class="post__av">' + esc(initials(p.panelist)) + '</span>';
         return '<article class="post">'
-          + '<div class="post__top"><span class="post__av">' + esc(initials(p.panelist || p.title)) + '</span>'
+          + (p.image_url ? '<img class="post__img" src="' + esc(p.image_url) + '" alt="" loading="lazy">' : '')
+          + '<div class="post__top">' + av
           + '<span class="post__who"><strong>' + esc(p.panelist || "HOPUR") + '</strong><span>' + esc(p.role || "") + '</span></span>'
           + '<span class="post__time">' + esc(timeAgo(p.published_at)) + '</span></div>'
           + '<h4>' + esc(p.title) + '</h4>'
           + (p.summary ? '<p>' + esc(p.summary) + '</p>' : '')
           + (pts.length ? '<ul>' + pts.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '')
+          + (p.body ? '<button class="post__more" data-more>Ver más</button><div class="post__full">' + esc(p.body) + '</div>' : '')
           + '</article>';
       }).join("");
+      feed.querySelectorAll("[data-more]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          var full = b.nextElementSibling;
+          var open = full.classList.toggle("is-open");
+          b.textContent = open ? "Ver menos" : "Ver más";
+        });
+      });
     }
     if (feed) {
       if (!sb) {
