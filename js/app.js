@@ -218,6 +218,22 @@
       for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
       return arr;
     }
+    var notifMsg = document.getElementById("notifMsg");
+    function notifSay(t, isErr) {
+      if (notifMsg) { notifMsg.style.display = ""; notifMsg.textContent = t; notifMsg.style.color = isErr ? "#c0392b" : "#1e8e6a"; }
+      if (isErr) { try { alert("HOPUR · Notificaciones\n" + t); } catch (e) {} }
+    }
+    function sameKey(sub) {
+      try {
+        var cur = urlB64ToUint8(CFG.PUSH_PUBLIC_KEY);
+        var k = sub && sub.options && sub.options.applicationServerKey;
+        if (!k) return false;
+        var a = new Uint8Array(k);
+        if (a.length !== cur.length) return false;
+        for (var i = 0; i < a.length; i++) if (a[i] !== cur[i]) return false;
+        return true;
+      } catch (e) { return false; }
+    }
     function updateNotifUI() {
       var granted = pushSupported && Notification.permission === "granted";
       var show = pushSupported && !granted;   // recomendar SOLO si aún no las activó
@@ -236,24 +252,44 @@
       return Promise.race([reg, to]);
     }
     function subscribePush(btn) {
-      if (!pushSupported) return;
+      if (!pushSupported) { notifSay("Este dispositivo/navegador no soporta notificaciones push. En iPhone instala la app en la pantalla de inicio.", true); return; }
       if (!CFG.PUSH_PUBLIC_KEY) { if (btn) btn.textContent = "Pronto"; return; }
       if (btn) { btn.disabled = true; btn.textContent = "Activando…"; }
       Notification.requestPermission().then(function (perm) {
-        if (perm !== "granted") { if (btn) { btn.disabled = false; btn.textContent = "Activar"; } updateNotifUI(); return; }
+        if (perm !== "granted") {
+          if (btn) { btn.disabled = false; btn.textContent = "Activar"; }
+          notifSay("No diste permiso de notificaciones. Actívalo en los ajustes del navegador/app y vuelve a intentar.", true);
+          updateNotifUI(); return;
+        }
         return swReady().then(function (reg) {
           return reg.pushManager.getSubscription().then(function (existing) {
-            return existing || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(CFG.PUSH_PUBLIC_KEY) });
+            if (existing && sameKey(existing)) return existing;
+            var unsub = existing ? existing.unsubscribe().catch(function () {}) : Promise.resolve();
+            return unsub.then(function () {
+              return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(CFG.PUSH_PUBLIC_KEY) });
+            });
           });
         }).then(function (sub) {
           var j = sub.toJSON();
-          return sb ? sb.from(CFG.PUSH_SUB_TABLE || "hopur_push_subscriptions").upsert({
+          if (!sb) { notifSay("No hay conexión con Supabase para guardar la suscripción.", true); if (btn) { btn.disabled = false; btn.textContent = "Reintentar"; } return; }
+          return sb.from(CFG.PUSH_SUB_TABLE || "hopur_push_subscriptions").upsert({
             endpoint: sub.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, user_agent: navigator.userAgent
-          }, { onConflict: "endpoint", ignoreDuplicates: true }) : null;
-        }).then(function () { updateNotifUI(); });
+          }, { onConflict: "endpoint", ignoreDuplicates: true }).then(function (r) {
+            if (r && r.error) {
+              notifSay("No se pudo guardar la suscripción: " + (r.error.message || r.error), true);
+              if (btn) { btn.disabled = false; btn.textContent = "Reintentar"; }
+              return;
+            }
+            notifSay("Listo: notificaciones activas en este dispositivo.", false);
+            if (btn) { btn.disabled = true; btn.textContent = "Activadas"; }
+            updateNotifUI();
+          });
+        });
       }).catch(function (err) {
         if (btn) { btn.disabled = false; btn.textContent = "Reintentar"; }
-        try { console.error("[HOPUR] push error:", (err && (err.message || err)) || err); } catch (e) {}
+        var m = (err && (err.message || err.name)) || String(err);
+        notifSay("No se pudo activar: " + m, true);
+        try { console.error("[HOPUR] push error:", err); } catch (e) {}
       });
     }
     if (notifBtn) notifBtn.addEventListener("click", function () { subscribePush(notifBtn); });
